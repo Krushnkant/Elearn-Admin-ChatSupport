@@ -1,0 +1,44 @@
+.pointer {
+    cursor:pointer;
+  }
+  .pull-left > a {
+    float: left !important;
+  }
+  .pull-center > a {
+    float: center !important;
+  }
+  .pull-right > a {
+    float: right !important;
+  }
+  .error {
+    color: #ff0000;
+  }
+  .action-button {
+    margin-left: 15px;
+  }
+  .dropdown-menu {
+    min-width: 93px;
+  }
+  /* selected btn css */
+  .btn-group-toggle .btn:not(:disabled):not(.disabled).active, .btn-group-toggle .btn:not(:disabled):not(.disabled):active, .show>.btn.dropdown-toggle {
+        color: #fff;
+        background-color: #2196F3;
+        border-color: #2196F3;
+  }
+
+  /* non selected btn css */
+  .btn-group-toggle .btn {
+    color: #fff;
+    background-color: #b7b7b7;
+    border-color: #6c757d;
+  }
+
+  .dropdown-toggle {
+    width: 125px !important;
+  }
+
+  .dropdown-menu li>a
+  {
+    color:black;
+    text-decoration: none;
+  }

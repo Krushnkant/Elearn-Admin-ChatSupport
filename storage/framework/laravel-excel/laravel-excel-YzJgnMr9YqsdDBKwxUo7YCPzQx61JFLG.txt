@@ -1,0 +1,296 @@
+﻿id,category_id,sub_category_id,course_id,title,question_type,marks,dificulty_level,explanation,status,assessment_id,created_at,updated_at,silver_set,gold_set
+1,1,2,1,"The project manager shifts to an agile approach for a project with an aggressive go-to-market timeline. The project manager needs to revise the stakeholder plan so that it follows agile principles.
+  
+ What should the project manager do to meet this need?",1,1,Complex,"To facilitate timely, productive discussion and decision making, adaptive teams engage with stakeholders directly rather than going through layers of management. Often the client, user, and developer exchange information in a dynamic co-creative process that leads to more stakeholder involvement and higher satisfaction.In order to accelerate the sharing of information within and across the organization, agile methods promote aggressive transparency.
+ PMBOK® Guide Sixth Edition (2018), 13. Project Stakeholder Management, p506
+  | The Agile Practice Guide, Annex A1 PMBOK® Guide Mapping, p95",0,16,4/3/7778 3:09,,1,1
+2,1,2,1,"Project team members are concerned that a new resource does not seem suitable for an assigned task.
+  
+ How should the project manager respond to this concern?",1,1,Complex,"A project manager should not take action by just listening to other member’s feedback. He should talk to the new member to find out about his strength and make some evaluation later. 
+ 
+ PMBOK® Guide Sixth Edition (2018) PMI, 9. Project Resource Management / 9.4 Develop team, p338
+  | The Agile Practice Guide, 2.2 The Agile Manifesto and Mindset , p8",0,16,4/3/7778 3:09,,1,1
+3,1,3,1,"A project manager develops a project management plan and schedule based on an agreed-upon project lifecycle of 16 months. Later, due to changing business requirements, the project manager receives a request for completion within 9 months.
+ How should the project manager respond to this proposed change in timeline?",1,1,Complex,"To execute the project quickly, the project team should discuss on the whole scope together and find out the way to complete tasks at individual level within short time. By the discussion, many tasks could be by-passed from the base tasks and new tasks can be identified, which might help the project to reduce the total time frame of the project. This is an agile mindset of the project manager, by which a better value can be served in terms of time.
+ 
+ Effective Project Management: Traditional, Agile, Extreme, Hybrid (No Date) Robert K. Wysocki, Chapter 12 / Most of the solution is clearly known",0,16,4/3/7778 3:09,,,
+4,1,3,1,"During an iteration, Task 1 cannot be completed on time due to unexpected challenges. Another team within the project is depending on timely completion of Task 1 in order to fulfill their part of the project.
+  
+ How should the project manager resolve this issue?",1,1,Complex,"Hybrid approach might also involve evaluating iteration backlog items priorities to resolve time constraints.
+ 
+ PMBOK® Guide Sixth Edition (2018), 6. Project Schedule Management / 6.6 Control Schedule, 224
+  | The Agile Practice Guide (2017), 5. Implementing Agile: Delivering in an Agile Environment/5.3 Troubleshooting Agile Project Challenges, 58",0,16,4/3/7778 3:09,,,
+5,1,2,1,"The project manager schedules an iteration review and learns that a few key stakeholders do not approve of how a feature has been developed.
+  
+ What should the project manager do first in order to address this issue?",1,1,Complex,"One of the required abilities of Project Managers is to identify when the conflict escalates. If it happens, the Project Manager should help to facilitate a satisfactory solution, addressing conflict early, in private an using a direct and collaborative approach.
+ 
+ PMBOK® Guide Sixth Edition (2018), 9. Project Resource Management / 9.5.2 Manage Team: Tools and Techniques, p348",0,16,4/3/7778 3:09,,,
+6,1,2,1,"A key team member is asked to move to another project during the middle of a technical project. The team believes this is an unwise move and expresses concern.
+  
+ Which action will help to resolve the issue?",1,1,Complex,"PM should know how to handle key personnel changes and keep the team motivated and productive.
+ 
+ PMBOK® Guide Sixth Edition (2018) 9, Project Resource Management / 9.5 Manage Team, 345-346
+  | Project Managers Portable Handbook, 3rd Ed (No Date), Section 5/ 5.3.4 Coaching Techniques and Tools",0,16,4/3/7778 3:09,,,
+7,1,2,1,"At a weekly project status meeting, a key team member expresses concerns about the overall approach documented within the project management plan. The Project manager is surprised because the team is in the process of executing an important component of the project and the concern has not been raised before.
+  
+ What steps should the project manager take?",1,1,Complex,"Conflict should be addressed in private, first, to better understand the concern being raised. Exploring the concern after the meeting gives the PM an opportunity to verify the concern and determine needed next steps without disrupting the meeting with all meeting attendees. 
+ 
+ PMBOK® Guide Sixth Edition (2018) 9. Project Resource Management / 9.5.2.1 Interpersonal and Team Skills, p348",0,16,4/3/7778 3:09,,,
+8,1,2,1,"During a meeting, a project manager learns that a business result needs to be delivered in four weeks, although the original plan was sixteen weeks. The project manager also hears that there is no available technical resource who might be able to join the team. The project manager knows the technical resource manager because they worked together on a previous project.
+  
+ What is the first thing the project manager should do?",1,1,High Complex,"Per Agile manifesto, it values individual and interactions over processes and tools. Thus, it is best to meet with the resource manager to understand the real situation rather than informing sponsor first which might be the false alarm.
+ 
+ PMBOK® Guide Sixth Edition (2018) Project Communications Management / 10.2.2.6 Interpersonal and Team Skills / Networking, p386
+  | The Agile Practice Guide, 2.2 The Agile Manifesto and Mindset , p8",0,16,4/3/7778 3:09,,,
+9,1,2,1,"A team decides that an agile approach fits the needs of the next phase in their project. Unfortunately, there are team members who have not had the appropriate agile training.
+  
+ How should the project manager respond to the lack of agile training?",1,1,Medium,"If project team members training results in added skills that could be useful for future phases or future projects, schedule training lessons and related costs could be evaluated to be included in resource management plan and cost management plan.
+ 
+ PMBOK® Guide Sixth Edition (2018) 9. Project resource Management / 9.4.2.6 Training, p342
+  | The Agile Practice Guide (2017), 4. Implementing Agile: Creating An Agile Environment / 4.2.1 Servant Leader Responsibilities, 37",0,16,4/3/7778 3:09,,,
+10,1,2,1,"A project manager believes that a delay in developing a prototype was due to a lack of knowledge in a specific skill that was needed by the cross-functional team.
+  
+ How could the project manager prevent this situation on future projects?",1,1,Complex,"Develop the human resource management plan by defining the roles and responsibilities of the project team members in order to create a project organizational structure and provide guidance regarding how resources will be assigned and managed.
+ 
+ PMBOK® Guide Sixth Edition (2018), 9. Project Resource Management, 309
+  | The Agile Practice Guide (2017), 4 Implementing Agile: Creating an Agile Environment / 4.3.3 Generalizing Specialists, p42",0,16,4/3/7778 3:09,,,
+11,1,3,1,"A new project manager joins the project’s daily standups, only to find that the project team spends too much time discussing ways to deal with obstructions in the project. Because of these discussions, standups often last well over two hours.
+  
+ What process should be used to deal with this issue?",1,1,Simple,"Most project manager's think if he has the daily startup, then he can apply agile way to manage the projects. But it is important for agile is how to implement the daily standup.
+  
+ Teams run their own standups. When run well, standups can be very useful, provided the nature of the team’s work requires intense collaboration. Identify the blockers on the standups but have separate meetings to discuss the blockers and the solution.
+ 
+ The Agile Practice Guide (2017), Chapter 5 / 5.2.4 Daily Standups, 53",0,16,4/3/7778 3:09,,,
+12,1,3,1,"A customer is not satisfied with the delivered product, saying that it was not what they expected. The project manager is surprised, because the agile development team delivered the product several iterations early.
+  
+ What is one way that the project manager could have avoided this result?",1,1,Medium,"The customer was not engaged enough in the project. The iteration review is the best mechanism for the team to demonstrate working software and for the customer to give feedback to ensure that their expectations are met.
+ 
+ PMBOK® Guide Sixth Edition (2018), 13. Project Stakeholder Management / 13.3 Manage Stakeholder Engagement,524
+  | The Agile Practice Guide (No Date), 5 Implementing Agile: Delivering in and Agile Environment / 5.2.5 Demonstrations/Reviews, 55",0,16,4/3/7778 3:09,,,
+13,1,2,1,"A project manager's team has been efficiently delivering expected results in an environment where budget and scope are fixed. Now, there is an increased demand for new skills due to changes in the market.
+  
+ What can the project manager do to meet this new demand?",1,1,Complex,"Develop Team: Identifying and assessing skills is the key responsibility of a Project Manager and accordingly upgrading the team's skill and competencies to meet the project demand.
+ 
+ PMBOK® Guide Sixth Edition (2018), 9. Project Resource Management / 9.4 Develop Team, pp 336-338
+  | The Agile Practice Guide (2017), 4 Implementing Agile: Creating an Agile Environment / 4.2.1.4 Consider These Servant Leader Responsibilities, pp 36-37",0,16,4/3/7778 3:09,,,
+14,1,2,1,"A project team is small and the team members have known each other for a long time. The team's project is in the execution phase. Recently, a team member told the new project manager that another team member has been complaining about how the project is being managed.
+  
+ How should this new project manager respond?",1,1,High Complex,"A) No - While this may help in addressing the situation, it will not help to rectify any existing damage done to the team as a result of the situation.
+ B) Yes - This is the best solution. It encourages every team member to particulate and results in a clear set of guidelines for the team.
+ C) No - This is not the best answer. While this will create a set of guidelines, they may not be the best ones for the team.
+ D) No - This is not the best solution as it does not encourage team cohesion and self leadership.
+ 
+ PMBOK® Guide Sixth Edition (2018), 9. Project Resource Management / 9.1.3.2 Team Charter, 319 | The Agile Practice Guide (2017), 5. Implementing Agile: Delivering In AN Agile Environment / 5.1 Charter The Project And The Team p50",0,16,4/3/7778 3:09,,,
+15,1,1,1,"During a highly-regulated project, the project sponsor and a high-level executive have asked for changes that appear to disregard legal requirements. 
+  
+ What should be the first step in the project manager's response?",1,1,Complex,"A) No - This is not the best response as you may not fully understand the situation.
+ B) No - This is necessary but is not the first step
+ C) Yes - This is the best FIRST step before going to the CCB because this is a highly regulated industry
+ D) No - While this may provide guidance, this is not ultimately your decision to decide.
+ 
+ PMBOK® Guide Sixth Edition (2018), Part 2 The Standard for Project Management / 1.3 Linking Organizational Governance and Project Governance PMI, p545
+  | Project Managers Portable Handbook, 3rd Ed (2010) Section 6. Project Initiation and Execution / 6.3 Legal Considerations and Execution",0,16,4/3/7778 3:09,,,
+16,1,2,1,"A project manager has multiple projects. One project has new team members and is in its early stages. Unfortunately, the project manager will be very busy executing other projects over the next few weeks. 
+  
+ How can the project manager develop the new project team over the next few weeks?",1,1,Complex,"A) Yes - This will allow the team to normalize themselves and be self-servicing when you are unavailable.
+ B) No - This may be productive, but it is a one-time activity and does not encourage self-servicing when you are unavailable.
+ C) No - This does not encourage the team to get to know each other and become self-servicing.
+ D) No - While this may result in deeper relationships, there is not enough time for this and it does not encourage the team to get to know each other.
+ 
+ PMBOK® Guide Sixth Edition (2018), Part 2 The Standard for Project Management / 1.5 The Project Lifecycle, pp 547-548",0,16,4/3/7778 3:09,,,
+17,1,1,1,"A project manager needs to ensure that the team delivers business value within the required timelines. The manager recently learned that key stakeholders are worried that the current release plan will not meet urgent business needs. 
+  
+ What can the project manager do to effectively respond to the stakeholder concerns?",1,1,Medium,"Defining the minimum viable product would allow the team to release business value within timelines by focusing only on the must-have items that the business stakeholders need.
+ 
+ Essential Scrum: A Practical Guide to the Most Popular Agile Process (No Date) Kenneth S. Rubin, Chapter 17 Envisioning (Product Planning) / Product Roadmap Definition
+  | The Agile Practice Guide (2017), 3. Life Cycle Section / 3.1.3 Characteristics of Incremental Life Cycles,p23",0,16,4/3/7778 3:09,,,
+18,1,2,1,"A key stakeholder voices a concern during the planning stage about whether the available resources are sufficient to meet the objectives of the project. The project manager believes that the stakeholder is right.
+  
+ How should the project manager handle this stakeholder's concern?",1,1,Medium,"Acquire and manage project resources by following the human resource and procurement management plans in order to meet project requirements.
+ 
+ PMBOK® Guide Sixth Edition (2018), 9. Project Resource Management /9.3 Acquire Resources, p330",0,16,4/3/7778 3:09,,,
+19,1,2,1,"A project manager notices that one team member seems increasingly unhappy during team meetings. The team member is not making progress on a key work package, and this lack of progress is now impacting the critical path. The team member feels that they are not in the correct role within the project team.
+  
+ What should the project manager do?",1,1,Complex,"A) No - This is positive reinforcement, but it may be unwarranted.
+ B) Yes - This is the best response. The individual may truly be right. As a Servant Leader, you can help them find the correct role.
+ C) No - This is helpful, but it doesn't address the core of their concern.
+ D) No - This creates a false sense of momentum that doesn't address the core of their concern.
+ 
+ PMBOK® Guide Sixth Edition (2018), Part 2 The Standard for Project Management 1. Introduction 1.7 Role of the Project Manager, p552
+  | The Agile Practice Guide (2017), 4. Implementing Agile: Creating An Agile Environment / 4.2.1 Servant Leader Responsibilities 34",0,16,4/3/7778 3:09,,,
+20,1,3,1,"A project owner repeatedly complains, saying that a function developed by the development team does not seem to align with the original design.
+  
+ What will help to solve this issue?",1,1,High Complex,"Retrospective can discuss the product release status, whether the team reaches any other milestone. It can be used by project manage to survey all necessary parties to reach consensus and build understanding
+ 
+ PMBOK® Guide Sixth Edition (2018), 8 Project Quality Management / 8.3.2.6 Meetings, p305
+  | The Agile Practice Guide (2017), 5. Implementing Agile: Delivering In An Agile Environment / 5.2.1 Retrospectives, pp50-51",0,16,4/3/7778 3:09,,,
+21,1,1,1,"A customer indicates that they would like to add functionality. Although this request is made during the execution phase of the project, the project manager finds that the cost for the addition would be small. The additional functionality, if successful, would increase the opportunity for profit. 
+ What should the project manager do next?",1,1,Complex,"By building a small increment and then testing and reviewing it, the team can add value in terms of new functionalities or additional awarded projects. Important factor for a successful implementation and value capture is the response time of the team 
+ 
+ PMBOK® Guide Sixth Edition (2018), 1. Introduction / 1.2.4.1 Project and Development Life Cycles, p19",0,16,4/3/7778 3:09,,,
+22,1,2,1,"A customer requests a change in the technical approach for a product currently in development. The project manager learns about this request during a reoccurring project review.
+  
+ What should the project manager do in response to the customer's request?",1,1,Medium,"As a technical issue the project management should address the team to assess and select the best options to solve, empower then and improving engagement.
+ 
+ The Agile Practice Guide (2017), 2 An Introduction To Agile / Figure 2-2 The Twelve Principles Behind the Agile Manifesto, p9 
+  | The Agile Practice Guide (2017), 4 Implementing Agile: Creating An Agile Environment / 4.2 Servant Leadership Empowers The Team, p33",0,16,4/3/7778 3:09,,,
+23,1,3,1,"A project manager realizes during the third iteration of product development that the template used for the project management plan is not showing updates.
+  
+ Which action should the project manager take?",1,1,Complex,"In a hybrid approach a project manager should work to protect the team against impediment around the product building. This question addresses administrative work that doesn't require technical knowledge. 
+ 
+ The Agile Practice Guide (2017), 4 Implementing Agile: Creating An Agile Environment / 4.2 Servant Leadership Empowers The Team, p33",0,16,4/3/7778 3:09,,,
+24,1,3,1,"During a challenging shareholder meeting, the customer indicates that they will reject an iteration's deliverable. 
+  
+ What should the project manager do?",1,1,Medium,"Before initiate any action the project manager should work with the team to identify the root cause of the problem and build an approach to conduct the project for the next iterations. As a hybrid approach a retrospective ceremonial can be a good option to solve this situation.
+ 
+ PMBOK® Guide Sixth Edition (2018), Part 2 The Standard for Project Management / 5. Monitoring and Controlling Process Group / 5.1 Monitoring and Controlling Project Work, p 615",0,16,4/3/7778 3:09,,,
+25,1,2,1,"During work on a government project, stakeholders pressure the project manager to submit to their preferred actions. While the project manager must coordinate and plan with multiple stakeholders, the project manager must also deal with complex relations and frequently changing scenarios.
+  
+ What should the project manager consider doing?",1,1,Medium,"Salience model needs to be used to categorize for government contracts especially when the scenario is for frequently changing, complex relationships with multiple representatives involved 
+ 
+ PMBOK® Guide Sixth Edition (2018), 13. Project Stakeholder Management / 13.1.2.4 Data Representation, p513",0,16,4/3/7778 3:09,,,
+26,1,2,1,"A project manager is working on a small project that is critical for a larger program milestone. A new resource has been assigned to replace a key resource who had to leave the project. Unfortunately, an outside stakeholder claims that the person who assigned the new resource sent their weakest team member.
+  
+ How should the project manager approach this rumor?",1,1,Complex,"A) No - This is not the best use of time, and unfairly makes presumptions on the candidate.
+ B) Yes - This is the best answer. Without seeing performance first-hand, there is no available proof to the hearsay.
+ C) No - This assumes that hearsay is fact, which may create a strained relationship between the Project Manager and functional manager.
+ D) No - While this may give solace to the Project Manager, this is inappropriate and unwarranted.
+ 
+ PMBOK® Guide Sixth Edition (2018) 9. Project Resource Management / 9.3.2.1 Decision Making, p332",0,16,4/3/7778 3:09,,,
+27,1,3,1,"A project manager needs to ensure that all data security requirements are covered during a data warehouse development project’s execution phase. Each of the databases created during different project phases will have a specific data security policy to comply with governmental data security laws.
+  
+ How should the project manager plan to meet these requirements?",1,1,Complex,"The project review is the best opportunity to formally review compliance. These reviews should be scheduled quarterly or at significant milestones
+ 
+ PMBOK® Guide Sixth Edition (2018), 8. Project Quality Management / Tailoring Considerations, p276
+  | PMBOK® Guide Sixth Edition (2018), 8. Project Quality Management / 8.3.1.6 Enterprise Environmental Factors, p301",0,16,4/3/7778 3:09,,,
+28,1,2,1,"Several successor activities are behind schedule because a project team member has not been at work for the past week. This impacts the critical path.
+  
+ How should the project manager respond to this problem?",1,1,Complex,"A) No - This is premature and will most likely take longer than attempting to rectify the situation.
+ B) Yes - A Project Manager also has the ability to be a coach. Servant Leadership encourages listening and serving, and therefore it may be possible to compromise with the team member. 
+ C) No - This does not address the situation and is in direct contradiction to the coaching role of a Project Manager.
+ D) No - This does not address the situation directly and offsets blame to a third party.
+ 
+ PMBOK® Guide Sixth Edition (2018), 10. Project Communication Management / 10.2 Manage Communication / 10.2.2.6 Interpersonal and Team Skills, p386
+  | PMBOK® Guide Sixth Edition (2018), 9. Project Resource Management / 9.5.2.1 Interpersonal and Team Skills / Conflict Management, p348
+  | The Agile Practice Guide (2017), 4 Implementing Agile: Creating an Agile Environment / 4.2.1 Servant Leader Responsibilities, p34",0,16,4/3/7778 3:09,,,
+29,1,2,1,"A company is struggling to define the scope of a new project that has multiple phases with a high level of dependency between the phases. 
+  
+ How should the project manager approach this challenge?",1,1,Complex,"Although most of the distractors are not bad ideas for the project manager, the key is the first correct action the they must perform. Introducing adaptive steps in a heavily predictive environment is never easy and also, the stakeholders will be the ones heavily involved in the 3 weeks interaction phase.
+ 
+ PMBOK® Guide Sixth Edition (2018), 13. Project Stakeholder Management / 13.3 Manage Stakeholder Engagement, p524 
+  | The Agile Practice Guide (2017), 5. Implementing Agile: Delivering In An Agile Environment / 5.2.6 Planning for Iteration-Base Agile, p55",0,16,4/3/7778 3:09,,,
+30,1,3,1,"After six iterations, significant variations have occurred to project scope and schedule. These are due to the customer's technology regulations and security policies, which are regularly reviewed. The project manager wants to suggest a new approach to the next iteration to avoid possible delays.
+  
+ What should the project manager do first?",1,1,Complex,"The retrospective is used to review lessons learned and suggest corrective actions for the next iterations. 
+ 
+ Essential Scrum: A Practical Guide to the Most Popular Agile Process (2012), Chapter 22. Sprint Retrospective / Overview
+  | The Agile Practice Guide (2017), 5. Implementing Agile: Delivering In An Agile Environment / 5.2.1. Retrospectives, pp 50-51",0,16,4/3/7778 3:09,,,
+31,1,3,1,"All team members on a new project want to gain the customer's trust by delivering value as quickly as possible. The project manager learns that one resource has worked with the sponsor on other projects. The resource seems to be using personal influence, working with a project sponsor to increase the project's benefits realization. 
+  
+ At which stage in the project should the project manager address this concern to optimize cost effectiveness?",1,1,Medium,"The retrospective would be the event to address this concern.
+ 
+ PMBOK® Guide Sixth Edition (2018), 8. Project Quality Management / 8.3.2. Control Quality: Tools and Technics / 8.3.2.6 Meetings, p305
+ | PMBOK® Guide Sixth Edition (2018), 13. Project Stakeholder Management / 13.4.2.6 Meetings, p535",0,16,9/15/7384 0:17,,,
+32,1,3,1,"A project team learns that there is a new compliance requirement from an international entity that may impact the baseline business case for the project. They learn this right after project charter is completed and the project sponsor has signed. 
+  
+ How should the project manager proceed?",1,1,Medium,"The context of this scenario demands the Project Manager to influence the organization (sponsor) and recommend next steps after reviewing and understanding compliance requirements and consequences.
+ 
+ PMBOK® Guide Sixth Edition (2018),4. Project Integration Management / 4.1.1.3 Enterprise Environmental Factors p78",0,16,9/15/7384 0:17,,,
+33,1,3,1,"A team misunderstood one product functionality documented in an earlier stage of the project. During the current iteration, the functionality has not yet been developed, but a business representative has mentioned the deficiency.
+  
+ How should the project manager proceed?",1,1,Complex,"As the functionality has not been built the project manager should facilitate building common understanding and empowering the team to evaluate the impact of a possible change, this way avoiding re-work.
+ 
+ PMBOK® Guide Sixth Edition (2018), 3. The Role of the Project Manager / 3.4.4 Leadership Skills
+  | The Agile Practice Guide (2017) 3 Life Cycle Selection / 3.1.10 - Hybrid life cycles as Fit-For-Purpose, p29",0,16,9/15/7384 0:17,,,
+34,1,2,1,"Some agile approaches have recently been added to an infrastructure company's predictive processes. The team is not completing the planned story points, and the change control board (CCB) is becoming passive. The project manager is concerned and wants to improve productivity.
+  
+ What should the project manager do?",1,1,Complex,"Training should add more skills and abilities for the team, as a long-term solution
+ 
+ PMBOK® Guide Sixth Edition (2018), 9. Project Resource Management /9.4.3.1 Team Performance Assessments, p343",0,16,9/15/7384 0:17,,,
+35,1,3,1,"During one daily standup meeting, team members indicate that they are having to engage in rework because there seems to be too much up-front work. 
+  
+ How should the project manager respond to this concern?",1,1,Complex,"Shorter iterations allow for managing functionalities more closely.
+ Should the team keep working on a minimum Viable Product.
+ 
+ The Agile Practice Guide (2017), Implementing Agile: Delivering In An Agile Environment / 5.3 Troubleshooting Agile Project Challenges / Table 5-1, p59",0,16,9/15/7384 0:17,,,
+36,1,1,1,"A project manager from a traditional project management organization is assigned to an ongoing project. Recently, the organization has started to use agile methodologies in its projects. The project manager hears that some team members feel like key subject matter expertise is missing and there is insufficient collaboration within the team. 
+  
+ How should the project manager respond to these team members' concerns?",1,1,Complex,"Being an organization that is moving from Predictive to Agile Project Management, it is necessary to include Agile methodologies.
+ 
+ The Agile Practice Guide (2017), 4 Implementing Agile: Creating An Agile Environment / 4.3.2 Agile Teams, pp 40-41",0,16,9/15/7384 0:17,,,
+37,1,3,1,"A contractor has sent an email request for urgent payment of their last installment on a project that is going through a long execution stage with multiple contractors.
+  
+ How should the project manager respond to this contractor's request?",1,1,Simple,"Even an inexperienced project manager should understand that terms and conditions should be agreed before engaging a contractor to actually do project work. The procurement plan holds all data re contracts and is the single source to guide payment activities 
+ 
+ PMBOK® Guide Sixth Edition (2018), 4, Project Integration Management / 4.7.1 Close Projects or Phase: Inputs, pp124-125
+  | The Agile Practice Guide (2017), 6 Organizational Considerations For Project Agility / 6.3 Procurement and Contracts p77",0,16,9/15/7384 0:17,,,
+38,1,2,1,"A team member expresses concern about a team behavior issue during a retrospective meeting. The member says that group morale is affected by two team members who continuously criticize the high amount of requirements in each iteration.
+  
+ Match each conflict resolution technique with the project manager's possible resolution for this issue.",1,1,Complex,"The success of project managers in managing their project teams depends on their ability to resolve conflict. Different project managers may use different conflict resolutions methods and techniques for resolving conflict.
+ 
+ PMBOK® Guide Sixth Edition (2018), 9. Project Resource Management / 9.5.2.1 Interpersonal and Team Skills, pp348-349",0,16,9/15/7384 0:17,,,
+39,1,3,1,"A project manager for a construction firm meets with stakeholders. All stakeholders agree on a 20 month lifecycle for a project. After work has begun, the project manager learns that stakeholders would like project completion within no more than 12 weeks.
+  
+ What should be the first step in the project manager’s response?",1,1,Complex,"Consistent with executing the project with urgency, working with stakeholders to reduce requirements is the best option listed to reduce delivery time.
+ 
+ PMBOK® Guide Sixth Edition (2018), 6. Project Schedule Management / Trends and Emerging Practices in Project Schedule Management, p177",0,16,9/15/7384 0:17,,,
+40,1,3,1,"During an iteration, a project team encounters problems that may cause a delay in task completion. Another team within the same project needs the task to be completed on time in order to meet their schedule.
+  
+ What can the project manager do to resolve this problem?",1,1,Complex,"May cause a delay does not mean the task completion will be delayed, To improve probability of success, reprioritizing the backlog may improve the probability for success more than the other options. 
+ 
+ PMBOK® Guide Sixth Edition (2018), 6. Project Schedule Management / 6.6 Control Schedule, pp 222-224 
+  | The Agile Practice Guide (2017), 5 Implementing Agile: Delivering In An Agile Environment / 5.2.3 Backlog Refinement, p52",0,16,9/15/7384 0:17,,,
+41,1,2,1,"Certain key stakeholders are dissatisfied with how a key feature of a project has been developed. They express their dissatisfaction during an iteration review meeting.
+  
+ What should the project manager do first to resolve this issue?",1,1,Complex,"Identifying the source of conflict is a key initial step in conflict management.
+ 
+ PMBOK® Guide Sixth Edition (2018), 9. Project Resource management / 9.5.2 Manage Team Tools and Techniques, p348",0,16,9/15/7384 0:17,,,
+42,1,2,1,"During a technical project, a key project member is reassigned to a different project. The team has expressed disapproval regarding the reassignment.
+  
+ What action can help mitigate the team's disapproval?",1,1,Complex,"PM should know how to handle key personnel changes and keep the team motivated and productive.
+ 
+ PMBOK® Guide Sixth Edition (2018) 9. Project Resource Management / 9.5 Manage Team, p345 
+  | Project Managers Portable Handbook, 3rd Ed (2010) Section 5 Project Leadership / 5.8.2 Decision-Making Considerations",0,16,9/15/7384 0:17,,,
+43,1,2,1,"A key team member is unhappy with the overall approach documented in a project management plan. The member surprises the project manager with negative comments about the approach during a weekly status meeting during the execution phase of the project.
+  
+ How should the project manager address the team member’s concerns?",1,1,High Complex,"Conflict should be addressed in private, first, to better understand the concern being raised. Exploring the concern after the meeting gives the PM an opportunity to verify the concern and determine needed next steps without disrupting the meeting with all meeting attendees.
+  
+ PMBOK® Guide Sixth Edition (2018) //9 Project Resource Management / 9.5.2 Manage Team: Tools and Techniques, p348",0,16,9/15/7384 0:17,,,
+44,1,3,1,"A project manager is faced with an updated schedule that requires delivering a business result under a far more aggressive timeline. The project’s technical resource manager has worked with the project manager on previous projects. Still, a team member indicates that the company does not have technical resources that could be added to the project to meet the new timeline.
+  
+ What should be the project manager's next step?",1,1,High Complex,"Per Agile manifesto, it values individual and interactions over processes and tools. Thus, it is best to meet with the resource manager to understand the real situation rather than informing sponsor first which might be the false alarm.
+ 
+ PMBOK® Guide Sixth Edition (2018) 10. Project Communication Management / 10.2 Manage Communication, p381
+  | The Agile Practice Guide (2017), 2 An Introduction To Agile / 2.2 The Agile Manifest and Mindset, p8",0,16,9/15/7384 0:17,,,
+45,1,3,1,"A project manager has been asked to conduct a risk analysis that is based on a high-level scope. As part of the analysis, the project manager must use expert judgment to prepare a document.
+  
+ Which document-based action is being performed?",1,1,Medium,"Expert judgment is one of the tools and techniques for developing the project charter.
+ 
+ PMBOK® Guide Sixth Edition (2018), 4. Project Integration Management 4.2.1 Develop Project Charter, p79",0,16,1/1/1970 0:00,,,
+46,1,2,1,"An agile approach meets the needs of the next phase in a team’s project. As the team discusses the phase it becomes clear that some team members have not received appropriate training in the agile model.
+  
+ How should the project manager respond to this issue?",1,1,Complex,"If project team members training results in added skills that could be useful for future phases or future projects, schedule training lessons and related costs could be evaluated to be included in resource management plan and cost management plan.
+ 
+ PMBOK® Guide Sixth Edition (2018), 9. Project Resource Management / 9.4.2.6 Training, p342
+  | The Agile Practice Guide (2017), 3 Life Cycle Selection / 3.3 Project Factors That Influence Tailoring p32",0,16,8/28/7928 0:51,,,
+47,1,2,1,"A project manager receives complaints from a project sponsor because of a delay in developing a prototype. The project manager responds that the delay was due to a lack of knowledge in a specific skill that was needed by the cross-functional project team.
+  
+ How could the project manager avoid this type of situation in the future?",1,1,Complex,"Develop the human resource management plan by defining the roles and responsibilities of the project team members in order to create a project organizational structure and provide guidance regarding how resources will be assigned and managed.
+ 
+ PMBOK® Guide Sixth Edition (2018), 9. Project Resource Management / 9.3.3 Develop Team: Outputs, p343 
+  | The Agile Practice Guide (2017), 4 Implementing Agile: Creating An Agile Environment / 4.3.3 Generalizing Specialists, p42",0,16,0289-12-18 00:52:00,,,
+48,1,3,1,"A projects’ daily standups are long, often lasting more than two hours. The project team uses the standup meetings for extended discussions about solutions to project obstacles.
+  
+ What should the project manager do to improve the daily standup meetings?",1,1,High Complex,"Most of project manager think if he has the daily startup, then he can apply agile way to manage the projects. But it is important for agile is how to implement the daily standup.
+  
+ Teams run their own standups. When run well, standups can be very useful, provided the nature of the team’s work requires intense collaboration. Identify the blockers on the standups but have separate meetings to discuss the blockers and the solution.
+ 
+ The Agile Practice Guide (2017), 5 Implementing Agile: Delivering In An Agile Environment / 5.2.4 Daily Standups, p53",0,16,1/1/1970 0:00,,,
+49,1,2,1,"A new resource is assigned to fill in for a resource who is leaving. The new resource will be working on a small project that is critical to a larger program milestone. Unfortunately, there is a rumor that the new resource may be a problem, due to a lack of skills.
+  
+ How should the program manager respond to this rumor?",1,1,High Complex,"A) No - This is not the best use of time, and unfairly makes presumptions on the candidate.
+ B) Yes - This is the best answer. Without seeing performance first-hand, there is no available proof to the hearsay.
+ C) No - This assumes that hearsay is fact, which may create a strained relationship between the Project Manager and functional manager.
+ D) No - While this may give solace to the Project Manager, this is inappropriate and unwarranted.
+ 
+ PMBOK® Guide Sixth Edition (2018), 9. Project Resource Management / 9.4 Develop Team pp336-338",0,16,1/1/1970 0:00,,,
