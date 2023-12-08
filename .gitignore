@@ -22,6 +22,7 @@ public_html/hot
 
 storage/*.key
 storage/logs
+storage/logs/laravel.log
 .env
 Homestead.yaml
 Homestead.json
