@@ -278,31 +278,59 @@ class AuthController extends Controller
 
     public function sendOtp($user, $para)
     {
-        $apiKey = urlencode('jjqB90p8UJ4-eUTsE2sU9oyBIMTT5aCZzfPiekl3Oa');
+        // $apiKey = urlencode('jjqB90p8UJ4-eUTsE2sU9oyBIMTT5aCZzfPiekl3Oa');
+        // $numbers = array("91{$para['mobile']}");
+        // // $numbers = array("917470543328");
+        // $sender = urlencode('KWOODS');
+        // $message = rawurlencode("Your One Time Password is {$para['otp']}. Please Use this One time Password (OTP) for the Knowletwoods APP.");
+        // $numbers = implode(',', $numbers);
+        // // Prepare data for POST request
+        // $data = array('apikey' => $apiKey, 'numbers' => $numbers, "sender" => $sender, "message" => $message);
 
-        $numbers = array("91{$para['mobile']}");
-        // $numbers = array("917470543328");
-        $sender = urlencode('KWOODS');
+        // // Send the POST request with cURL
+        // $ch = curl_init('https://api.textlocal.in/send/');
+        // curl_setopt($ch, CURLOPT_POST, true);
+        // curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // $response = curl_exec($ch);
+        // curl_close($ch);
 
+        $messagePayload = [
+            "from" => "KWOODS",
+            "type" => "sms",
+            "data_coding" => "auto",
+            "flash_message" => false,
+            "campaign_id" => "35734019",
+            "template_id" => "17544988",
+            "recipient" => [
+                [
+                    "to" => "91".$para['mobile'],
+                    "var1" => strval($para['otp'])
+                ]
+            ]
+        ];
 
-        $message = rawurlencode("Your One Time Password is {$para['otp']}. Please Use this One time Password (OTP) for the Knowletwoods APP.");
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.enablex.io/sms/v1/messages/',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode($messagePayload),
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'Authorization: Basic ' . base64_encode("67ef886a4827b61ce105cc63:ydeBe2yEyrasuayZuRepuBeVaJabuBemeMuN")
+            ),
+        ));
 
-        $numbers = implode(',', $numbers);
+        $response = curl_exec($curl);
 
-        // Prepare data for POST request
-        $data = array('apikey' => $apiKey, 'numbers' => $numbers, "sender" => $sender, "message" => $message);
-
-        // Send the POST request with cURL
-        $ch = curl_init('https://api.textlocal.in/send/');
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        curl_close($ch);
-
-// print_r($response);
-
-//         die('sf');
+        curl_close($curl);
+        echo json_encode($messagePayload);
 
         // Process your response here
         return $response;
