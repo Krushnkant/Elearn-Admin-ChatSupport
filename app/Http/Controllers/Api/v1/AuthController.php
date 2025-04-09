@@ -330,7 +330,7 @@ class AuthController extends Controller
         $response = curl_exec($curl);
 
         curl_close($curl);
-        echo json_encode($messagePayload);
+        // echo json_encode($messagePayload);
 
         // Process your response here
         return $response;
