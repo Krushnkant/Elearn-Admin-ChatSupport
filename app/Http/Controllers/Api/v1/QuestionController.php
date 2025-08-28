@@ -12,7 +12,7 @@ use Response, DB, Mail, Auth;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Dompdf\Dompdf;
-
+use Log;
 
 class QuestionController extends Controller
 {
@@ -427,11 +427,11 @@ class QuestionController extends Controller
 
 
 		$user_id = \Auth::id();
-        $remaining_data = TestRemaining::where('set',$set)->where('assessment_id',$assessment_id)->where('user_id',$user_id)->first();
-
+        $remaining_data = TestRemaining::where('set',$set)->where('assessment_id',$assessment_id)->where('user_id',$user_id)->orderBy('id', 'desc')->first();
 
 	  	if(count($data) > 0) {
 	  		 //dd($remaining_data);
+			
 	  		if($remaining_data != ""){
 	  		$remaining_question_data = \DB::table('test_remaining_questions')->select('currect_answer_id as currectAns','question_id as questionId','answer_id as myAnswerId')->where('test_remaining_id',$remaining_data->id)->get();
 	  	    }else{
