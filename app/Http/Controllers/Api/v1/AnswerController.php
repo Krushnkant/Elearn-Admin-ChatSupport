@@ -10,7 +10,7 @@ use Illuminate\Contracts\Support\JsonableInterface;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Response, DB, Mail;
-
+use Log;
 
 class AnswerController extends Controller
 {
@@ -81,7 +81,7 @@ class AnswerController extends Controller
                 $my_answers  = json_decode($request->get('my_answers'));
                 $question_id  = $request->get('questionId');
                 $answer_id    = $request->get('myAnswerId');
-                $set    = $request->get('set');
+                $set = $request->get('set');
                 //dd($question_id);
                 foreach($my_answers as $key => $value){
                     $is_correct = 1;
@@ -112,7 +112,9 @@ class AnswerController extends Controller
             \DB::commit();
             if($result) {
                 $user_id =Auth::id();
-                $test_remaining = DB::table('test_remaining')->where('set',$set)->where('assessment_id',$request->assessment_id)->where('user_id',$user_id)->first();
+                 
+                $test_remaining = DB::table('test_remaining')->where('assessment_id',$request->assessment_id)->where('user_id',$user_id)->first();
+                
                 if(isset($test_remaining->id)){
                    DB::table('test_remaining_questions')->where('test_remaining_id', $test_remaining->id)->delete();
                    DB::table('test_remaining')->where('id', $test_remaining->id)->delete();
@@ -137,7 +139,7 @@ class AnswerController extends Controller
 
     public function store1(Request $request)
     {
-        
+
        $validator = Validator::make($request->all(), [
              'course_id'     => 'required',
              'assessment_id' => 'required',
@@ -158,16 +160,16 @@ class AnswerController extends Controller
         \DB::beginTransaction();
         try {
 
-            $TestRemaining = TestRemaining::where('user_id',$request->user_id)->where('assessment_id',$request->assessment_id)->first();
+            $TestRemaining = TestRemaining::where('set',$request->set)->where('user_id',$request->user_id)->where('assessment_id',$request->assessment_id)->orderBy('id', 'desc')->first();
+          
             if($TestRemaining == ""){
             $param = [
-                
                 'course_id' => $request->course_id,
                 'assessment_id' => $request->assessment_id,
                 'user_id'       => $request->user_id,
                 'stop_time'   => $request->stop_time,
                 'question_no'   => $request->question_no,
-                'set'   => $request->set,
+                'set'   => intval(preg_replace('/\D/', '', $request->set)), // ✅ fix
                 'created_at'    => date('Y-m-d H:i:s'),
             ];
             //dd($param);
@@ -204,6 +206,19 @@ class AnswerController extends Controller
 
             $result = \DB::table('test_remaining_questions')->insert($data);
             }else{
+
+                 $param = [
+                   'course_id' => $request->course_id,
+                    'assessment_id' => $request->assessment_id,
+                    'user_id'       => $request->user_id,
+                    'stop_time'   => $request->stop_time,
+                    'question_no'   => $request->question_no,
+                    'set'   => intval(preg_replace('/\D/', '', $request->set)), // ✅ fix
+                ];
+                //dd($param);
+                //$last_id = TestRemaining::insertGetId($param);
+                $update_id = \DB::table('test_remaining')->where('id', $TestRemaining->id)->limit(1)->update($param);
+
               $last_id = $TestRemaining->id;
             }
 
@@ -221,6 +236,9 @@ class AnswerController extends Controller
                 "message" => "Oops! something went wrong"
             ]);
         } catch (\Exception $e) {
+            
+        
+        Log::info($e);
             throw $e;
             \DB::rollback();
         }

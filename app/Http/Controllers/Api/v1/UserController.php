@@ -332,6 +332,10 @@ class UserController extends Controller
          'reportpdf' => $fileName,
        ];
        $update = TestResult::where('id', $id)->update($data1);
+
+         $detailedFileName = $fileName . '_detailed';
+       $this->generateDetailedPdf($detailedFileName, $data, $response);
+       $response['detailed_pdf_download'] = "https://chatsupport.co.in/storage/app/public/pdf/$detailedFileName.pdf";
        return response()->json($response);
         }
 
@@ -347,6 +351,67 @@ class UserController extends Controller
             return ($value * 100) / $totalValue;
         }
         return 0;
+    }
+
+     private function generateDetailedPdf($fileName, $testData, $resultData)
+    {
+        try {
+            // Ensure the directory exists
+            $pdfDirectory = storage_path('app/public/pdf');
+            if (!file_exists($pdfDirectory)) {
+                mkdir($pdfDirectory, 0755, true);
+            }
+
+            $questionsList = [];
+
+            foreach ($testData as $answer) {
+                // Skip if question data is missing
+                if (!isset($answer->question) || !$answer->question) {
+                    continue;
+                }
+
+                $questionTitle = Question::where('id', $answer->question_id)->first();
+
+                // Get all options for this question
+                $optionsData = DB::table('question_options')
+                    ->where('question_id', $answer->question_id)
+                    ->select('id', 'options')
+                    ->get();
+
+                $options = [];
+                foreach ($optionsData as $option) {
+                    $options[$option->id] = $option->options;
+                }
+
+                $userAnswer = null;
+                if ($answer->answer_id && isset($options[$answer->answer_id])) {
+                    $userAnswer = $options[$answer->answer_id];
+                }
+
+                $questionsList[] = [
+                    'id' => $answer->question_id,
+                    'question' => $questionTitle->title ?? 'No question text available',
+                    'options' => $options,
+                    'user_answer' => $userAnswer,
+                    'explanation' => $questionTitle->explanation ?? 'No explanation available'
+                ];
+            }
+
+            \PDF::setPaper('a4')
+                ->loadView('admin.pdf.detailed-test-results', [
+                    'questionsList' => $questionsList,
+                    'user' => Auth::user(),
+                    'total_attempt' => $testData->where('answer_id', '!=', null)->count(),
+                    'testResult' => $resultData
+                ])
+                ->save($pdfDirectory . "/$fileName.pdf");
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('PDF Generation Error: ' . $e->getMessage());
+            Log::error('Stack Trace: ' . $e->getTraceAsString());
+            return false;
+        }
     }
 
     private function pdf($fileName,$data)

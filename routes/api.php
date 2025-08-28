@@ -39,11 +39,12 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'v1' => 'v1.'], functio
     Route::post('resend-otp', 'AuthController@forgetPassword');
     Route::post('recover-password', 'AuthController@updatePassword');
     Route::get('mock-test', 'AssessmentController@mockTest');
-    Route::post('post-answer-test', 'AnswerController@store1');
     Route::post('post-answer-test2', 'AnswerController@store2');
 });
 
 Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'v1' => 'v1.', 'middleware' => 'auth:api'], function () {
+    Route::post('post-answer-test', 'AnswerController@store1');
+    
     Route::get('home', 'HomeController@index');
     Route::get('category', 'CategoryController@index');
     Route::get('category-list', 'CategoryController@categorylist');
