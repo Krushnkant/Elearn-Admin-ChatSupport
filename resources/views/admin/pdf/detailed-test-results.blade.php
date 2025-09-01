@@ -29,7 +29,11 @@
 
     <h2>Detailed Test Results</h2>
     <p><strong>User:</strong> {{ $user->name }}</p>
-    <p><strong>Total Attempted:</strong> {{ $total_attempt }}</p>
+    <p><strong>Total Attempted:</strong> {{ $attempted }} / {{ $totalQuestions }}</p>
+    <p><strong>Status:</strong> {{ $status }}</p>
+    <p><strong>Percentage Scored:</strong> {{ $totalScored }}</p>
+    <p><strong>Assessment Completion Date:</strong> {{ $assessmentDate }}</p>
+    <p><strong>Pass Percentage:</strong> {{ $passPercentage }}</p>
     <hr>
 
     @foreach($questionsList as $q)
