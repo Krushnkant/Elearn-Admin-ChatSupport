@@ -364,6 +364,10 @@ class UserController extends Controller
 
             $questionsList = [];
 
+            $totalQuestions = count($testData);
+            $attempted = 0;
+            $correctCount = 0;
+
             foreach ($testData as $answer) {
                 // Skip if question data is missing
                 if (!isset($answer->question) || !$answer->question) {
@@ -386,6 +390,11 @@ class UserController extends Controller
                 $userAnswer = null;
                 if ($answer->answer_id && isset($options[$answer->answer_id])) {
                     $userAnswer = $options[$answer->answer_id];
+                    $attempted++;
+                }
+
+                if ($answer->is_correct == Answer::CORRECT) {
+                        $correctCount++;
                 }
 
                 $questionsList[] = [
@@ -397,14 +406,31 @@ class UserController extends Controller
                 ];
             }
 
+            $totalScored = $totalQuestions > 0 ? ($correctCount * 100) / $totalQuestions : 0;
+
+            // Dynamically fetch pass percentage from the related assessment (or default 70%)
+            $passPercentageValue = $resultData['assessment']['passing_percentage'] ?? 100; // e.g., 70 or from DB
+            $status = $totalScored >= $passPercentageValue ? "Pass" : "Fail";
+
+            // Dynamically fetch assessment completion date
+            $assessmentDate = $resultData['assessment']['assessment_campletion_date'] 
+                                ?? now()->format('d/m/Y | h:i:s A');
+
+            // Format pass percentage string
+            $passPercentage = $passPercentageValue . " %";
+
             \PDF::setPaper('a4')
                 ->loadView('admin.pdf.detailed-test-results', [
-                    'questionsList' => $questionsList,
+                    'questionsList' => $questionsList, // array of questions
                     'user' => Auth::user(),
-                    'total_attempt' => $testData->where('answer_id', '!=', null)->count(),
-                    'testResult' => $resultData
+                    'totalQuestions' => $totalQuestions,
+                    'attempted' => $attempted,
+                    'totalScored' => number_format($totalScored, 2) . " %",
+                    'status' => $status,
+                    'assessmentDate' => $assessmentDate,
+                    'passPercentage' => $passPercentage,
                 ])
-                ->save($pdfDirectory . "/$fileName.pdf");
+                ->save(storage_path('app/public/pdf') . "/$fileName.pdf");
 
             return true;
         } catch (\Exception $e) {
