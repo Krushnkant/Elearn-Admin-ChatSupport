@@ -409,7 +409,7 @@ class UserController extends Controller
             $totalScored = $totalQuestions > 0 ? ($correctCount * 100) / $totalQuestions : 0;
 
             // Dynamically fetch pass percentage from the related assessment (or default 70%)
-            $passPercentageValue = $resultData['assessment']['passing_percentage'] ?? 100; // e.g., 70 or from DB
+            $passPercentageValue = $resultData['assessment']['passing_percentage'] ?? 70; // e.g., 70 or from DB
             $status = $totalScored >= $passPercentageValue ? "Pass" : "Fail";
 
             // Dynamically fetch assessment completion date
