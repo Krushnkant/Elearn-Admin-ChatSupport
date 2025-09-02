@@ -432,11 +432,21 @@ class QuestionController extends Controller
 	  	if(count($data) > 0) {
 	  		 //dd($remaining_data);
 			
-	  		if($remaining_data != ""){
-	  		$remaining_question_data = \DB::table('test_remaining_questions')->select('currect_answer_id as currectAns','question_id as questionId','answer_id as myAnswerId')->where('test_remaining_id',$remaining_data->id)->get();
-	  	    }else{
-	  	     $remaining_question_data = [];	
-	  	    }
+	  			if($remaining_data != ""){
+				$remaining_question_data = \DB::table('test_remaining_questions')->select('currect_answer_id as currectAns','question_id as questionId','answer_id as myAnswerId')->where('test_remaining_id',$remaining_data->id)->get();
+
+				// ✅ Calculate attended and correct count from array
+				$attendedCount = $remaining_question_data->count();
+
+				$correctCount = $remaining_question_data->filter(function ($q) {
+					return $q->currectAns == $q->myAnswerId;
+				})->count();
+
+				}else{
+				  $remaining_question_data = [];
+					$correctCount = 0;
+				}
+			
 			return response()->json([
 	            'success'	=> true,
 	            'stop_time' =>  isset($remaining_data->stop_time) ? $remaining_data->stop_time : 0,
@@ -444,7 +454,7 @@ class QuestionController extends Controller
 	            'last_question_no' =>  isset($remaining_data->last_q_id) ? $remaining_data->last_q_id : 0,
 	            'remaining_question_data' => $remaining_question_data,
 	            'set'       => $set,
-	            'correct_ans'       => isset($remaining_data->correct_ans) ? $remaining_data->correct_ans : 0,
+	            'correct_ans'  => isset($correctCount) ? $correctCount : 0,
 	            'message'   => "Question List.",
 	            'data'      => $data,
 	            'count'     => count($data),
