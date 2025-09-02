@@ -15,126 +15,170 @@ use Log;
 class AnswerController extends Controller
 {
 	public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'course_id'     => 'required',
-            'assessment_id' => 'required',
-            'my_answers'    => 'required',
-        ]);
+	{
+        //return $request->all();
+        /*$request->validate([
+            'user_id'       => 'required',
+            'question_id'   => 'required',
+            'answer_id'     => 'required'
+    
+        ]);*/
+
+        
+        //dd($request->my_answers);
+        //$data = $request->all();
+        //dd(json_decode($data));
+        //$data = json_decode($data);
+        //dd($data);
+
+         $validator = Validator::make($request->all(), [
+             'course_id'     => 'required',
+             'assessment_id' => 'required',
+             'my_answers'   => 'required',
+            //'questionId'   => 'required|array',
+             //'myAnswerId'     => 'required|array'
+         ]);
+
+        // $rules = [          
+        //     'course_id'     => 'required',
+        //      'assessment_id' => 'required',
+        //     'my_answers'   => 'required',          
+        // ];
+
+        // $messages = [
+        //     'course_id.required' => 'Couse id required',
+        //     'assessment_id.required' => 'assessment id required', 
+        //     'my_answers.required' => 'My answers ',                              
+        // ];
+
+        // $post = $request->all();
+
+       // $validator = Validator::make($post, $rules, $messages);
+
 
         if($validator->fails()){
             return response()->json([
-                'success'   => false,
-                'message'   => $validator->errors()->first(),
-            ]);
+                    'success'   => false,
+                    'message'   => $validator->errors()->first(),
+                ]);
         }
-
+        //dd(json_decode($request->my_answers));
+        //dd($data);
         \DB::beginTransaction();
         try {
             $param = [
-                'course_id'     => $request->course_id,
+                //'course_id'     => $request->get('course_id'),
+                //'assessment_id' => $request->get('assessment_id'),
+                'course_id' => $request->course_id,
                 'assessment_id' => $request->assessment_id,
                 'user_id'       => $request->user()->id,
-                'created_at'    => now(),
+                'created_at'    => date('Y-m-d H:i:s'),
             ];
+            //dd($param);
             $last_id = TestResult::insertGetId($param);
 
-            $test_remaining = DB::table('test_remaining')
-                ->where('assessment_id',$request->assessment_id)
-                ->where('user_id',$request->user()->id)
-                ->first();
 
-            $data = [];
-            $addedQuestions = []; // track already inserted question_ids
+             $data = []; // ✅ Always start here
+            $remaining_question_ids = [];
 
-            // 1. Test Remaining Questions
-            if(isset($test_remaining)) {
-                $remaining_questions = DB::table('test_remaining_questions')
-                    ->where('test_remaining_id', $test_remaining->id)
-                    ->get();
-
-                foreach($remaining_questions as $rq){
-                    if(!in_array($rq->question_id, $addedQuestions)) { // ✅ prevent duplicate
-                        $data[] = [
-                            'mock_test_id'  => $last_id,
-                            'question_id'   => $rq->question_id,
-                            'answer_id'     => $rq->answer_id,
-                            'is_correctans' => $rq->currect_answer_id,
-                            'created_at'    => now(),
-                        ];
-                        $addedQuestions[] = $rq->question_id;
-                    }
-                }
-            }
-
-            // 2. User answers
-            $userAnswers = [];
             if($request->get('my_answers')) {
                 $my_answers  = json_decode($request->get('my_answers'));
 
-                foreach($my_answers as $value){
+                $my_answersData = json_decode($request->get('my_answers'), true);
+
+                // Debug log to check structure
+
+                $is_fresh_start = false;
+                if (!empty($my_answersData)) {
+                    $questionIds = array_column($my_answersData, 'questionId');
+                    // ✅ If 1 is NOT present in the list → mark as fresh start
+                    if (!in_array(1, $questionIds)) {
+                        $is_fresh_start = true;
+                    }
+                }
+
+                if ($is_fresh_start) {
+                    $test_remaining = DB::table('test_remaining')
+                        ->where('assessment_id', $request->assessment_id)
+                        ->where('user_id', $request->user()->id)
+                        ->first();
+
+                    if($test_remaining) {
+                        $remaining_questions = DB::table('test_remaining_questions')
+                            ->where('test_remaining_id', $test_remaining->id)
+                            ->get();
+
+                        $remaining_data = [];
+                        foreach($remaining_questions as $rq) {
+
+                               $is_correct = 0; // default: incorrect
+                                if ($rq->answer_id != 0) {
+                                    if ($rq->answer_id == $rq->currect_answer_id) {
+                                        $is_correct = 1; // correct
+                                    }
+                                } else {
+                                    $is_correct = 2; // skipped
+                                }
+
+                            $remaining_data[] = [
+                                'mock_test_id'  => $last_id,
+                                'question_id'   => $rq->question_id,
+                                'answer_id'     => $rq->answer_id,
+                                'is_correctans' => $is_correct,
+                                'created_at'    => now(),
+                            ];
+                            $remaining_question_ids[] = $rq->question_id; // track IDs
+                        }
+
+                        if(!empty($remaining_data)) {
+                            $data = array_merge($data, $remaining_data);
+                        }
+                    }
+                }
+
+                foreach($my_answers as $value) {
+
+                       if (in_array($value->questionId, $remaining_question_ids)) {
+                            continue;
+                        }
+
                     $is_correct = 1;
                     if($value->myAnswerId != 0){
-                        $ansarray = explode(',', $value->myAnswerId); 
+                        $ansarray       = explode(',', $value->myAnswerId);
                         $currectansarray = explode(',', $value->currectAns);
-                        $resultarray = array_diff($ansarray,$currectansarray);
+                        $resultarray    = array_diff($ansarray,$currectansarray);
 
                         if(sizeof($resultarray) > 0){
                             $is_correct = 0; 
                         }
                     } else {
-                        $is_correct = 2; // skipped
+                        $is_correct = 2;
                     }
 
-                    if(!in_array($value->questionId, $addedQuestions)) { // ✅ prevent duplicate
-                        $data[] = [
-                            'mock_test_id'  => $last_id,
-                            'question_id'   => $value->questionId,
-                            'answer_id'     => $value->myAnswerId,
-                            'is_correctans' => $is_correct,
-                            'created_at'    => now(),
-                        ];
-                        $addedQuestions[] = $value->questionId;
-                    }
-                    $userAnswers[] = $value->questionId;
+                    $data[] = [
+                        'mock_test_id'  => $last_id,
+                        'question_id'   => $value->questionId,
+                        'answer_id'     => $value->myAnswerId,
+                        'is_correctans' => $is_correct,
+                        'created_at'    => now(),
+                    ];
                 }
             }
 
-            // 3. Default entry for skipped questions
-            if(isset($test_remaining)) {
-                foreach($remaining_questions as $rq){
-                    if(!in_array($rq->question_id, $userAnswers) && !in_array($rq->question_id, $addedQuestions)) {
-                        $data[] = [
-                            'mock_test_id'  => $last_id,
-                            'question_id'   => $rq->question_id,
-                            'answer_id'     => 0,
-                            'is_correctans' => 2, // skipped
-                            'created_at'    => now(),
-                        ];
-                        $addedQuestions[] = $rq->question_id;
-                    }
-                }
-            }
-
-            // ✅ Now insert only unique data
             $result = Answer::insert($data);
 
             \DB::commit();
             if($result) {
-                $user_id = Auth::id();
-                $test_remaining = DB::table('test_remaining')
-                    ->where('assessment_id',$request->assessment_id)
-                    ->where('user_id',$user_id)
-                    ->first();
-                
+                $user_id =Auth::id();
+                $test_remaining = DB::table('test_remaining')->where('assessment_id',$request->assessment_id)->where('user_id',$user_id)->first();
                 if(isset($test_remaining->id)){
-                    DB::table('test_remaining_questions')->where('test_remaining_id', $test_remaining->id)->delete();
-                    DB::table('test_remaining')->where('id', $test_remaining->id)->delete();
+                   DB::table('test_remaining_questions')->where('test_remaining_id', $test_remaining->id)->delete();
+                   DB::table('test_remaining')->where('id', $test_remaining->id)->delete();
                 }
 
                 return response()->json([
                     "success"       => true,
-                    "message"       => "Answer submitted successfully",
+                    "message"       => "Answer submited successfully",
                     "mock_test_id"  => $last_id
                 ]);
             }
@@ -143,10 +187,11 @@ class AnswerController extends Controller
                 "message" => "Oops! something went wrong"
             ]);
         } catch (\Exception $e) {
-            \DB::rollback();
             throw $e;
+            \DB::rollback();
         }
-    }
+
+	}
 
     public function store1(Request $request)
     {
@@ -159,7 +204,6 @@ class AnswerController extends Controller
              //'myAnswerId'     => 'required|array'
          ]);
 
-         Log::info($request->all());
     
         if($validator->fails()){
             return response()->json([
@@ -280,8 +324,6 @@ class AnswerController extends Controller
             ]);
         } catch (\Exception $e) {
             
-        
-        Log::info($e);
             throw $e;
             \DB::rollback();
         }
