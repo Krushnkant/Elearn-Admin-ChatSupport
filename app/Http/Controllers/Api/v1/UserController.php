@@ -286,7 +286,7 @@ class UserController extends Controller
                 'success'          => true,
                 'message'          => "Test result",
                 'data'             => $data,
-                'total_scored'     => $total_scored . " %",
+                'total_scored'     => number_format($total_scored, 2)  . " %",
                 'status'           => $total_scored > 60 ? "Pass" : "Fail",
                 'assessment'       => $assessment,
                 'total_attempt'    =>$total_attempt,
