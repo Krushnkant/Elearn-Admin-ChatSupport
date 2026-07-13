@@ -171,4 +171,34 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/admin/dashboard', functio
         Route::get('/{id}/edit','EBookController@edit');
         Route::post('/update','EBookController@update');
     });
+
+    Route::group(['prefix' => 'live-videos'], function () {
+        Route::get('/','LiveVideoController@index');
+        Route::get('/create','LiveVideoController@create');
+        Route::post('/store','LiveVideoController@store');
+        Route::get('/{id}/edit','LiveVideoController@edit');
+        Route::post('/update','LiveVideoController@update');
+
+        // Individual video links under a given day
+        Route::get('/{liveVideoId}/links','LiveVideoLinkController@index');
+        Route::get('/{liveVideoId}/links/create','LiveVideoLinkController@create');
+        Route::post('/{liveVideoId}/links/store','LiveVideoLinkController@store');
+        Route::get('/{liveVideoId}/links/{id}/edit','LiveVideoLinkController@edit');
+        Route::post('/{liveVideoId}/links/update','LiveVideoLinkController@update');
+    });
+
+    Route::group(['prefix' => 'study-materials'], function () {
+        Route::get('/','StudyMaterialController@index');
+        Route::get('/create','StudyMaterialController@create');
+        Route::post('/store','StudyMaterialController@store');
+        Route::get('/{id}/edit','StudyMaterialController@edit');
+        Route::post('/update','StudyMaterialController@update');
+
+        // Lessons under a given study-material book
+        Route::get('/{bookId}/lessons','StudyMaterialLessonController@index');
+        Route::get('/{bookId}/lessons/create','StudyMaterialLessonController@create');
+        Route::post('/{bookId}/lessons/store','StudyMaterialLessonController@store');
+        Route::get('/{bookId}/lessons/{id}/edit','StudyMaterialLessonController@edit');
+        Route::post('/{bookId}/lessons/update','StudyMaterialLessonController@update');
+    });
 });

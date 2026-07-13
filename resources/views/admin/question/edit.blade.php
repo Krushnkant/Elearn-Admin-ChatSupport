@@ -131,6 +131,18 @@
                                             @endif
                                         </div>
 
+                                        <!-- ===== PMP rich metadata ===== -->
+                                        @php $pgroups = ['Initiating','Planning','Executing','Monitoring & Controlling','Closing']; @endphp
+                                        <div class="form-group col-md-6 ">
+                                            <label>Process Group</label>
+                                            <select name="process_group" class="form-control">
+                                                <option value="">— None —</option>
+                                                @foreach($pgroups as $pg)
+                                                    <option value="{{ $pg }}" {{ $question_info->process_group === $pg ? 'selected' : '' }}>{{ $pg }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
                                         <div class="form-group col-md-6 ">
                                             <label for="title">Marks<span class="text-danger">*</span></label>
                                             <input type="number" name="marks" class="form-control" id="marks" placeholder="Enter marks" value="{{$question_info->marks}}">
@@ -225,6 +237,11 @@
                                                                 <input type="radio" name="is_correct[{{$key}}]" autocomplete="off" value="0" {{ ($q_options->is_correct == 0) ? ('checked') : ('') }}> No
                                                                 </label>
                                                             </div>
+                                                        </div>
+
+                                                        <div class="form-group col-md-12 ">
+                                                            <label>Why Wrong <small class="text-muted">(shown when this option is a wrong choice)</small></label>
+                                                            <textarea name="why_wrong[]" class="form-control" rows="1">{{ $q_options->why_wrong }}</textarea>
                                                         </div>
 
                                                         <i class="fa fa-trash button button-danger" onclick="deleteOptions('{{$q_options->id }}')" style="padding-left: 950px;"></i>

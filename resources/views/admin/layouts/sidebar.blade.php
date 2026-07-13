@@ -74,6 +74,24 @@
                </a>
             </li>
 
+            <li class="nav-item has-treeview {{ (request()->is('admin/live-videos') || request()->is('admin/live-videos/*')) ? 'active' : ''}}">
+               <a href="{{ url('admin/live-videos') }}" class="nav-link">
+                  <i class="nav-icon fa fa-video" aria-hidden="true"></i>
+                  <p class=" ml-2">
+                     Live Videos
+                  </p>
+               </a>
+            </li>
+
+            <li class="nav-item has-treeview {{ (request()->is('admin/study-materials') || request()->is('admin/study-materials/*')) ? 'active' : ''}}">
+               <a href="{{ url('admin/study-materials') }}" class="nav-link">
+                  <i class="nav-icon fa fa-book-open" aria-hidden="true"></i>
+                  <p class=" ml-2">
+                     Study Material
+                  </p>
+               </a>
+            </li>
+
             <li class="nav-item has-treeview {{ (request()->is('admin/repors') || request()->is('admin/repors/*')) ? 'active' : ''}}">
                <a href="{{ url('admin/repors') }}" class="nav-link">
                   <i class="nav-icon fa fa-book" aria-hidden="true"></i>

@@ -11,10 +11,12 @@ $uri = urldecode(
     parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
 );
 
-// This file allows us to emulate Apache's "mod_rewrite" functionality from the
-// built-in PHP web server. This provides a convenient way to test a Laravel
-// application without having installed a "real" web server software here.
-if ($uri !== '/' && file_exists(__DIR__.'/public'.$uri)) {
+// This file emulates Apache's "mod_rewrite" for the built-in PHP web server.
+// This app is served with the document root at the PROJECT ROOT (asset URLs
+// include the "public/" prefix, e.g. /public/Admin/dist/js/adminlte.min.js),
+// so resolve static files relative to __DIR__ rather than __DIR__.'/public'.
+// Directories are never served statically; they fall through to Laravel.
+if ($uri !== '/' && is_file(__DIR__.$uri)) {
     return false;
 }
 

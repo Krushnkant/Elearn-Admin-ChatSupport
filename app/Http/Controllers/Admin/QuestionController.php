@@ -69,6 +69,15 @@ class QuestionController extends Controller
       'options.*.required'      => " The options field is required.",
     ]);
 
+    // Extra question metadata merged into every fanned-out question row.
+    $extra = [
+      'process_group' => $request->get('process_group'),
+    ];
+    $whyWrong = $request->get('why_wrong', []);
+    $addExtra = function ($rows) use ($extra) {
+      return array_map(function ($r) use ($extra) { return array_merge($r, $extra); }, $rows);
+    };
+
     \DB::beginTransaction();
     try {
 
@@ -103,7 +112,7 @@ class QuestionController extends Controller
                 
             }
          
-            Question::insert($domain_info);
+            Question::insert($addExtra($domain_info));
             // $insert_id = Question::insertGetId($domain_info);
              $insert_id1 = DB::getPDO()->lastInsertId();
           // dd ($domain_info); 
@@ -118,6 +127,7 @@ class QuestionController extends Controller
                   'question_id'   => $insert_id1,
                   'options'       => $d,
                   'is_correct'    => $is_correct[$key] == 1 ? 1 : 0,
+                  'why_wrong'     => isset($whyWrong[$key]) ? $whyWrong[$key] : null,
                   'created_at'    => date('Y-m-d H:i:s'),
                 ];
       
@@ -165,7 +175,7 @@ class QuestionController extends Controller
                 ];
                 //Question::insert($knowledge_info);
             }
-            Question::insert($knowledge_info);
+            Question::insert($addExtra($knowledge_info));
             // $insert_id = Question::insertGetId($domain_info);
              $insert_id2 = DB::getPDO()->lastInsertId();
             //$insert_id1 =  Question::insertGetId($knowledge_info);
@@ -178,6 +188,7 @@ class QuestionController extends Controller
                   'question_id'   => $insert_id2,
                   'options'       => $d,
                   'is_correct'    => $is_correct[$key] == 1 ? 1 : 0,
+                  'why_wrong'     => isset($whyWrong[$key]) ? $whyWrong[$key] : null,
                   'created_at'    => date('Y-m-d H:i:s'),
                 ];
       
@@ -225,7 +236,7 @@ class QuestionController extends Controller
                 ];
                // Question::insert($approach_info);
             }
-            Question::insert($approach_info);
+            Question::insert($addExtra($approach_info));
             // $insert_id = Question::insertGetId($domain_info);
              $insert_id3 = DB::getPDO()->lastInsertId();
             // $insert_id1 =  Question::insertGetId($approach_info);
@@ -238,6 +249,7 @@ class QuestionController extends Controller
                   'question_id'   => $insert_id3,
                   'options'       => $d,
                   'is_correct'    => $is_correct[$key] == 1 ? 1 : 0,
+                  'why_wrong'     => isset($whyWrong[$key]) ? $whyWrong[$key] : null,
                   'created_at'    => date('Y-m-d H:i:s'),
                 ];
       
@@ -619,9 +631,16 @@ class QuestionController extends Controller
       'marks'             => 'required',
       'question_type'     => 'required',
     ]);
+
+    // Extra question metadata merged into the update, + per-option why_wrong.
+    $extra = [
+      'process_group' => $request->get('process_group'),
+    ];
+    $whyWrong = $request->get('why_wrong', []);
+
     \DB::beginTransaction();
     try {
-    
+
        if(!isset($request->domain_id) && !isset($request->knowledge_id) && !isset($request->approach_id) && !isset($request->knowledge_id)){
 
       
@@ -646,7 +665,7 @@ class QuestionController extends Controller
                 
          
             //Question::insert($domain_info);
-            $update =  Question::where('id', $id)->update($domain_info);
+            $update =  Question::where('id', $id)->update(array_merge($domain_info, $extra));
             
          
              if(!empty($request->get('options'))) {
@@ -658,6 +677,7 @@ class QuestionController extends Controller
                   'question_id'   => $id,
                   'options'       => $d,
                   'is_correct'    => $is_correct[$key] == 1 ? 1 : 0,
+                  'why_wrong'     => isset($whyWrong[$key]) ? $whyWrong[$key] : null,
                   'created_at'    => date('Y-m-d H:i:s'),
                 ];
                 if(isset($request->file('image')[$key])) {
@@ -715,7 +735,7 @@ class QuestionController extends Controller
             }
          
             //Question::insert($domain_info);
-            $update =  Question::where('id', $id)->update($domain_info);
+            $update =  Question::where('id', $id)->update(array_merge($domain_info, $extra));
             
              
           
@@ -729,6 +749,7 @@ class QuestionController extends Controller
                   'question_id'   => $id,
                   'options'       => $d,
                   'is_correct'    => $is_correct[$key] == 1 ? 1 : 0,
+                  'why_wrong'     => isset($whyWrong[$key]) ? $whyWrong[$key] : null,
                   'created_at'    => date('Y-m-d H:i:s'),
                 ];
                 if(isset($request->file('image')[$key])) {
@@ -782,7 +803,7 @@ class QuestionController extends Controller
                 ];
                 //Question::insert($knowledge_info);
             }
-            $update =  Question::where('id', $id)->update($knowledge_info);
+            $update =  Question::where('id', $id)->update(array_merge($knowledge_info, $extra));
             
             
             
@@ -795,6 +816,7 @@ class QuestionController extends Controller
                   'question_id'   => $id,
                   'options'       => $d,
                   'is_correct'    => $is_correct[$key] == 1 ? 1 : 0,
+                  'why_wrong'     => isset($whyWrong[$key]) ? $whyWrong[$key] : null,
                   'created_at'    => date('Y-m-d H:i:s'),
                 ];
                 if(isset($request->file('image')[$key])) {
@@ -848,7 +870,7 @@ class QuestionController extends Controller
                 ];
                // Question::insert($approach_info);
             }
-            $update =    Question::where('id', $id)->update($approach_info);
+            $update =    Question::where('id', $id)->update(array_merge($approach_info, $extra));
             
             if(!empty($request->get('options'))) {
               $option_id = $request->get('options_id');
@@ -859,6 +881,7 @@ class QuestionController extends Controller
                   'question_id'   => $id,
                   'options'       => $d,
                   'is_correct'    => $is_correct[$key] == 1 ? 1 : 0,
+                  'why_wrong'     => isset($whyWrong[$key]) ? $whyWrong[$key] : null,
                   'created_at'    => date('Y-m-d H:i:s'),
                 ];
                 if(isset($request->file('image')[$key])) {

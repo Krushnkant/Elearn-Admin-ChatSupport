@@ -40,6 +40,9 @@ class HomeController extends Controller
 	  		->limit(30)
             ->get();
 
+	  	// Per-student dashboard stats (real progress for the logged-in user).
+	  	$data['stats'] = $this->userStats(optional($request->user())->id);
+
 	  	if(count($data) > 0) {
 	      return response()->json([
 	        'success' => true,
@@ -51,6 +54,45 @@ class HomeController extends Controller
 	      'success' => false,
 	      'message' => "Data not found.",
 	    ]);
+	}
+
+	/**
+	 * Compute real progress stats for a student, using the app's own
+	 * correctness rule (Answer::getIsCorrectAttribute): a question is
+	 * "attempted" when answer_id > 0, and "correct" when is_correctans > 0.
+	 */
+	private function userStats($userId)
+	{
+		$totalQ = (int) DB::table('questions')->count();
+
+		if (!$userId) {
+			return [
+				'overall_progress' => 0,
+				'mock_tests_taken' => 0,
+				'questions_solved' => 0,
+				'questions_total'  => $totalQ,
+				'exam_readiness'   => 0,
+			];
+		}
+
+		$mockTestsTaken = (int) DB::table('test_results')->where('user_id', $userId)->count();
+
+		$base = DB::table('answers')
+			->join('test_results', 'answers.mock_test_id', '=', 'test_results.id')
+			->where('test_results.user_id', $userId)
+			->where('answers.answer_id', '>', 0);
+
+		$attempted      = (int) (clone $base)->count();
+		$correct        = (int) (clone $base)->where('answers.is_correctans', '>', 0)->count();
+		$distinctSolved = (int) (clone $base)->distinct('answers.question_id')->count('answers.question_id');
+
+		return [
+			'overall_progress' => $totalQ > 0 ? (int) round($distinctSolved / $totalQ * 100) : 0,
+			'mock_tests_taken' => $mockTestsTaken,
+			'questions_solved' => $distinctSolved,
+			'questions_total'  => $totalQ,
+			'exam_readiness'   => $attempted > 0 ? (int) round($correct / $attempted * 100) : 0,
+		];
 	}
 
 	public function explore(Request $request)

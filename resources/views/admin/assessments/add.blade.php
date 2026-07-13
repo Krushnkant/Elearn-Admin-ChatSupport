@@ -58,6 +58,11 @@
                           </div>
 
                           <div class="form-group col-md-6">
+                            <label for="duration_mins">Duration (minutes)</label>
+                            <input type="number" name="duration_mins" class="form-control" id="duration_mins" placeholder="e.g. 230" value="{{ old('duration_mins', 230) }}" min="1">
+                          </div>
+
+                          <div class="form-group col-md-6">
                             <label for="title">Mock Exam<span class="text-danger">*</span></label>
                             <input type="number" name="mock_exam" class="form-control" id="mock_exam" placeholder="Enter mock exam" value="{{ old('mock_exam') }}" min="1">
                             @if ($errors->has('mock_exam'))

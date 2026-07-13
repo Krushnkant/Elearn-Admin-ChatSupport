@@ -144,7 +144,20 @@
                                             </p>
                                             @endif
                                         </div>
-                                         
+
+                                        <!-- ===== PMP rich metadata ===== -->
+                                        <div class="form-group col-md-6 ">
+                                            <label>Process Group</label>
+                                            <select name="process_group" class="form-control">
+                                                <option value="">— None —</option>
+                                                <option value="Initiating">Initiating</option>
+                                                <option value="Planning">Planning</option>
+                                                <option value="Executing">Executing</option>
+                                                <option value="Monitoring &amp; Controlling">Monitoring &amp; Controlling</option>
+                                                <option value="Closing">Closing</option>
+                                            </select>
+                                        </div>
+
                                         <!-- <div class="form-group col-md-6 " style="margin-top:20px";>
                                             <label for="question_type">Question Type<span class="text-danger">*</span></label><br>
                                             <input type="radio" id="single" name="question_type" value="1" checked>Single
@@ -222,6 +235,11 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="form-group col-md-12 ">
+                                                    <label>Why Wrong <small class="text-muted">(shown when this option is a wrong choice)</small></label>
+                                                    <textarea name="why_wrong[]" class="form-control" rows="1" placeholder="Why this option is incorrect"></textarea>
+                                                </div>
+
 
                                             </div>
                                         </div>
@@ -290,6 +308,10 @@
                                                         <input type="radio" checked name="is_correct[${x}]" value="0"> No
                                                         </label>
                                                     </div>
+                                                </div>
+                                                <div class="form-group col-md-12 ">
+                                                    <label>Why Wrong <small class="text-muted">(shown when this option is a wrong choice)</small></label>
+                                                    <textarea name="why_wrong[]" class="form-control" rows="1" placeholder="Why this option is incorrect"></textarea>
                                                 </div>`); //add input box
                 }
             });

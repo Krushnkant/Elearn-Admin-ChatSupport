@@ -78,6 +78,14 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'v1' => 'v1.', 'middlew
     Route::get('course-list', 'HomeController@courseList');
     Route::get('ebook-list', 'HomeController@ebookList');
     Route::get('mocktest-list', 'HomeController@mocktestList');
+    Route::get('live-videos', 'LiveVideoController@index');
+    Route::get('study-materials', 'StudyMaterialController@index');
+    Route::get('mock-tests', 'PmpMockTestController@index');
+    Route::get('mock-test-builder-options', 'MockTestBuilderController@options');
+    Route::get('mock-tests/{assessment}/questions', 'PmpExamController@questions');
+    Route::post('mock-tests/{assessment}/submit', 'PmpExamController@submit');
+    Route::get('mock-test-results/{result}', 'PmpExamController@result');
+    Route::get('mock-test-results/{result}/review', 'PmpExamController@review');
 
     //Explore Course
     Route::get('explore', 'HomeController@explore');
