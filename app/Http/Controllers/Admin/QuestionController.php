@@ -73,7 +73,8 @@ class QuestionController extends Controller
     $extra = [
       'process_group' => $request->get('process_group'),
     ];
-    $whyWrong = $request->get('why_wrong', []);
+    $whyWrong   = $request->get('why_wrong', []);
+    $whyCorrect = $request->get('why_correct', []);
     $addExtra = function ($rows) use ($extra) {
       return array_map(function ($r) use ($extra) { return array_merge($r, $extra); }, $rows);
     };
@@ -128,6 +129,7 @@ class QuestionController extends Controller
                   'options'       => $d,
                   'is_correct'    => $is_correct[$key] == 1 ? 1 : 0,
                   'why_wrong'     => isset($whyWrong[$key]) ? $whyWrong[$key] : null,
+                  'why_correct'   => isset($whyCorrect[$key]) ? $whyCorrect[$key] : null,
                   'created_at'    => date('Y-m-d H:i:s'),
                 ];
       
@@ -189,6 +191,7 @@ class QuestionController extends Controller
                   'options'       => $d,
                   'is_correct'    => $is_correct[$key] == 1 ? 1 : 0,
                   'why_wrong'     => isset($whyWrong[$key]) ? $whyWrong[$key] : null,
+                  'why_correct'   => isset($whyCorrect[$key]) ? $whyCorrect[$key] : null,
                   'created_at'    => date('Y-m-d H:i:s'),
                 ];
       
@@ -250,6 +253,7 @@ class QuestionController extends Controller
                   'options'       => $d,
                   'is_correct'    => $is_correct[$key] == 1 ? 1 : 0,
                   'why_wrong'     => isset($whyWrong[$key]) ? $whyWrong[$key] : null,
+                  'why_correct'   => isset($whyCorrect[$key]) ? $whyCorrect[$key] : null,
                   'created_at'    => date('Y-m-d H:i:s'),
                 ];
       
@@ -349,246 +353,227 @@ class QuestionController extends Controller
   }
 
 
+  /**
+   * Header names (case/space-insensitive) for the mock-test question import
+   * format, mapped to a short key used while building the insert rows.
+   */
+  const IMPORT_HEADER_MAP = [
+    'question id'                                  => 'external_id',
+    'question'                                      => 'title',
+    'option a'                                       => 'option_a',
+    'option b'                                       => 'option_b',
+    'option c'                                       => 'option_c',
+    'option d'                                       => 'option_d',
+    'correct answer'                                 => 'correct_answer',
+    'correct answer rationale'                       => 'rationale',
+    'why a is incorrect'                             => 'why_a',
+    'why b is incorrect'                             => 'why_b',
+    'why c is incorrect'                             => 'why_c',
+    'why d is incorrect'                             => 'why_d',
+    'why option a is incorrect'                      => 'why_a',
+    'why option b is incorrect'                      => 'why_b',
+    'why option c is incorrect'                      => 'why_c',
+    'why option d is incorrect'                      => 'why_d',
+    'pmp domain'                                     => 'domain',
+    'eco task'                                       => 'eco_task',
+    'topic category'                                 => 'topic_category',
+    'tested skill / topic'                           => 'tested_skill',
+    'methodology'                                    => 'methodology',
+    'question type'                                  => 'question_style',
+    'difficulty'                                     => 'difficulty',
+    'cognitive level'                                => 'cognitive_level',
+    'pmbok topic / knowledge area'                   => 'knowledge_area',
+    'predictive process group / lifecycle stage'     => 'process_group',
+    'pmbok reference'                                => 'pmbok_ref',
+    'agile reference'                                => 'agile_ref',
+    'pmi exam tip'                                    => 'exam_tip',
+    'exam trap'                                      => 'exam_trap',
+    'last reviewed'                                  => 'last_reviewed',
+  ];
+
+  /** Normalise a header cell for matching against IMPORT_HEADER_MAP. */
+  private function normalizeHeader($v)
+  {
+    return trim(preg_replace('/\s+/', ' ', strtolower((string) $v)));
+  }
+
+  /** A-D letters -> option column keys, in display order. */
+  const IMPORT_OPTION_LETTERS = ['A' => 'option_a', 'B' => 'option_b', 'C' => 'option_c', 'D' => 'option_d'];
+
+  /** Excel serial date (or literal date string) -> Y-m-d, best-effort. */
+  private function importDate($val)
+  {
+    if ($val === null || $val === '') {
+      return null;
+    }
+    if (is_numeric($val)) {
+      try {
+        return \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($val)->format('Y-m-d');
+      } catch (\Exception $e) {
+        return null;
+      }
+    }
+    $ts = strtotime((string) $val);
+    return $ts ? date('Y-m-d', $ts) : null;
+  }
+
+  /**
+   * Bulk-import questions from the mock-test question workbook (see
+   * IMPORT_HEADER_MAP for the expected columns). Every row becomes one
+   * question tied to the assessment picked on the import page, with its
+   * options and the full PMP metadata (domain, methodology, difficulty,
+   * cognitive level, ECO task, references, tips, etc.) that the mock test
+   * builder and exam runner already read.
+   */
   public function postImportCSV(Request $request)
   {
     $request->validate([
-      'question_csv' => 'required'
+      'question_csv' => 'required|file',
     ]);
 
-    //$excel = $request->file('question_csv');
-    $path1 = $request->file('question_csv')->store('temp'); 
-    $filepath=storage_path('app').'/'.$path1;
-    //dd($path);  
-    //$file = $excel->getRealPath();
-    
-	$file = fopen($filepath,"r");
-	$importData_arr = array();
-	$i = 0;
-		while (($filedata = fgetcsv($file, 10000000, ",")) !== FALSE)
-		{
-			$num = count($filedata );		 
-			 // Skip first row (Remove below comment if you want to skip the first row)
-			 /*if($i == 0){
-				$i++;
-				continue; 
-			 }*/
-			for ($c=0; $c < $num; $c++) {
-				$importData_arr[$i][] = $filedata [$c];
-			}
-			$i++;
-		}
-		fclose($file);
-	//echo "<pre>"; print_r($importData_arr);die;
-	//dd($importData_arr);
-	$total_record = count($importData_arr);
-	for($i=1;$i<$total_record;$i++)
-	{
-          
-         
-	if(
-		isset($importData_arr[$i]['0']) && $importData_arr[$i]['0']!=""
-		&& isset($importData_arr[$i]['22'])&& $importData_arr[$i]['22']!=""
-		&& isset($importData_arr[$i]['11'])&& $importData_arr[$i]['11']!=""
-		&& isset($importData_arr[$i]['2'])&& $importData_arr[$i]['2']!=""
-		&& isset($importData_arr[$i]['19'])&& $importData_arr[$i]['19']!=""
-		&& isset($importData_arr[$i]['17'])&& $importData_arr[$i]['17']!=""
-		)
-	{
-
-        	// if(
-	// 	isset($importData_arr[$i]['18']) &&  $importData_arr[$i]['18']!=""
-	// 	&& isset($importData_arr[$i]['0']) && $importData_arr[$i]['0']!=""
-	// 	&& isset($importData_arr[$i]['22'])&& $importData_arr[$i]['22']!=""
-	// 	&& isset($importData_arr[$i]['11'])&& $importData_arr[$i]['11']!=""
-	// 	&& isset($importData_arr[$i]['2'])&& $importData_arr[$i]['2']!=""
-	// 	&& isset($importData_arr[$i]['19'])&& $importData_arr[$i]['19']!=""
-	// 	&& isset($importData_arr[$i]['17'])&& $importData_arr[$i]['17']!=""
-	// 	&& isset($importData_arr[$i]['13'])&& $importData_arr[$i]['13']!=""
-	// 	&& isset($importData_arr[$i]['14'])&& $importData_arr[$i]['14']!=""
-	// 	)
-	// {
-               	
-		//$category_data = DB::table('categories')->where('name', $importData_arr[$i]['13'])->first();		
-		//$category_id = $category_data->id;
-		
-		//$categorydata = DB::table('categories')->where('name', $importData_arr[$i]['14'])->first();		
-		//$categoryid = $categorydata->id;
-		//$category_id = $category_data->type;
-		
-		//$sub_category_data = DB::table('categories')->where('name', $importData_arr[$i]['18'])->first();		
-		//$sub_category_id = $sub_category_data->id;
-
-                $category_data = DB::table('categories')->where('name', $importData_arr[$i]['13'])->first();	
-                if(isset($category_data->id)){
-                     $category_id = $category_data->id;
-                }else{
-                     $category_id = 0;
-                }	
-		//$category_id = ($category_data->id)?$category_data->id:0;
-		
-		$categorydata = DB::table('categories')->where('name', $importData_arr[$i]['14'])->first();
-                if(isset($categorydata->id)){
-                     $categoryid = $categorydata->id;
-                }else{
-                     $categoryid = 0;
-                }		
-		//$categoryid = ($categorydata->id)?$categorydata->id:0;
-		//$category_id = $category_data->type;
-		
-		$sub_category_data = DB::table('categories')->where('name', $importData_arr[$i]['18'])->first();
-                if(isset($sub_category_data->id)){
-                     $sub_category_id = $sub_category_data->id;
-                }else{
-                     $sub_category_id = 0;
-                }		
-		//$sub_category_id = ($sub_category_data->id)?$sub_category_data->id:0;
-                
-                if(isset($importData_arr[$i]['30']) && $importData_arr[$i]['30']!=""){
-                   $enabler = $importData_arr[$i]['30'];
-                }else{
-                   $enabler = "";
-                }
-		
-		
-		$values = array(
-			'set_type' 			=> $importData_arr[$i]['0'],
-			'category_id' 		=> $category_id,
-			'categoryid' 		=> $categoryid,
-			'sub_category_id' 	=> $sub_category_id,
-			'course_id' 		=> '1',
-			'assessment_id' 	=> $importData_arr[$i]['22'],
-			'marks' 			=> $importData_arr[$i]['11'],
-			'title' 			=> $importData_arr[$i]['2'],
-			'explanation' 		=> $importData_arr[$i]['19'],
-                        'enabler' 		=> $enabler,
-			'dificulty_level' 	=> $importData_arr[$i]['17'],
-			'status'            => '1',
-			'created_at'        => date('Y-m-d H:i:s') 
-			);
-		DB::table('questions')->insert($values);
-		$question_id = DB::getPdo()->lastInsertId();
-		
-		//1st Option
-		if($importData_arr[$i]['4']!="")
-		{
-			if($importData_arr[$i]['10']=='1' OR $importData_arr[$i]['10']=='1,2' OR $importData_arr[$i]['10']=='1,3' OR $importData_arr[$i]['10']=='1,4' OR $importData_arr[$i]['10']=='1,5' OR $importData_arr[$i]['10']=='1,6')
-			{
-				$is_correct = 1;
-			}else{
-				$is_correct = 0;
-			}
-			$que_options1 = array(
-                  'question_id'   => $question_id,
-                  'options'       => $importData_arr[$i]['4'],
-                  'is_correct'    => $is_correct,
-                  'created_at'    => date('Y-m-d H:i:s')
-                );
-			DB::table('question_options')->insert($que_options1);	
-		}
-		//2nd Option
-		if($importData_arr[$i]['5']!="")
-		{
-			if($importData_arr[$i]['10']=='2' OR $importData_arr[$i]['10']=='1,2' OR $importData_arr[$i]['10']=='2,3' OR $importData_arr[$i]['10']=='2,4' OR $importData_arr[$i]['10']=='2,5' OR $importData_arr[$i]['10']=='2,6')
-			{
-				$is_correct = 1;
-			}else{
-				$is_correct = 0;
-			}
-			$que_options2 = array(
-                  'question_id'   => $question_id,
-                  'options'       => $importData_arr[$i]['5'],
-                  'is_correct'    => $is_correct,
-                  'created_at'    => date('Y-m-d H:i:s')
-                );
-			DB::table('question_options')->insert($que_options2);	
-		}
-		
-		//3rd Option
-		if($importData_arr[$i]['6']!="")
-		{
-			if($importData_arr[$i]['10']=='3' OR $importData_arr[$i]['10']=='1,3' OR $importData_arr[$i]['10']=='2,3' OR $importData_arr[$i]['10']=='3,4' OR $importData_arr[$i]['10']=='3,5' OR $importData_arr[$i]['10']=='3,6')
-			{
-				$is_correct = 1;
-			}else{
-				$is_correct = 0;
-			}
-			$que_options3 = array(
-                  'question_id'   => $question_id,
-                  'options'       => $importData_arr[$i]['6'],
-                  'is_correct'    => $is_correct,
-                  'created_at'    => date('Y-m-d H:i:s')
-                );
-			DB::table('question_options')->insert($que_options3);	
-		}
-		
-		//4rth Option
-		if($importData_arr[$i]['7']!="")
-		{
-			if($importData_arr[$i]['10']=='4' OR $importData_arr[$i]['10']=='1,4' OR $importData_arr[$i]['10']=='2,4' OR $importData_arr[$i]['10']=='3,4' OR $importData_arr[$i]['10']=='4,5' OR $importData_arr[$i]['10']=='4,6')
-			{
-				$is_correct = 1;
-			}else{
-				$is_correct = 0;
-			}
-			$que_options4 = array(
-                  'question_id'   => $question_id,
-                  'options'       => $importData_arr[$i]['7'],
-                  'is_correct'    => $is_correct,
-                  'created_at'    => date('Y-m-d H:i:s')
-                );
-			DB::table('question_options')->insert($que_options4);	
-		}
-		
-		//5th Option
-		if($importData_arr[$i]['8']!="")
-		{
-			if($importData_arr[$i]['10']=='5' OR $importData_arr[$i]['10']=='1,5' OR $importData_arr[$i]['10']=='2,5' OR $importData_arr[$i]['10']=='3,5' OR $importData_arr[$i]['10']=='4,5' OR $importData_arr[$i]['10']=='5,6')
-			{
-				$is_correct = 1;
-			}else{
-				$is_correct = 0;
-			}
-			$que_options5 = array(
-                  'question_id'   => $question_id,
-                  'options'       => $importData_arr[$i]['8'],
-                  'is_correct'    => $is_correct,
-                  'created_at'    => date('Y-m-d H:i:s')
-                );
-			DB::table('question_options')->insert($que_options5);	
-		}
-		
-		//6th Option
-		if($importData_arr[$i]['9']!="")
-		{
-			if($importData_arr[$i]['10']=='6' OR $importData_arr[$i]['10']=='1,6' OR $importData_arr[$i]['10']=='2,6' OR $importData_arr[$i]['10']=='3,6' OR $importData_arr[$i]['10']=='4,6' OR $importData_arr[$i]['10']=='5,6')
-			{
-				$is_correct = 1;
-			}else{
-				$is_correct = 0;
-			}
-			$que_options6 = array(
-                  'question_id'   => $question_id,
-                  'options'       => $importData_arr[$i]['9'],
-                  'is_correct'    => $is_correct,
-                  'created_at'    => date('Y-m-d H:i:s')
-                );
-			DB::table('question_options')->insert($que_options6);	
-		}
-		
-		
-		//echo "<pre>"; print_r($category_data);die;
-	}
-	}
-	
- 	return Redirect::to("admin/assessments/".encode($request->get('assessment_id'))."/questions")->withSuccess("Great! Info has been added");
-	
-   /* $param = Excel::import(new QuestionsImport, $file);
-    if($param) {
-      return Redirect::to("admin/assessments/".encode($request->get('assessment_id'))."/questions")->withSuccess("Great! Info has been added");
+    // getImportCSV() already decoded the id once for the hidden field, so the
+    // posted value is the plain assessment id — decoding it again here would
+    // garble it (and silently insert every question with assessment_id = 0).
+    $assessmentId = (int) $request->get('assessment_id');
+    if ($assessmentId <= 0) {
+      \Log::warning('postImportCSV: could not resolve assessment id', [
+        'raw_posted_value' => $request->get('assessment_id'),
+        'referer'          => $request->headers->get('referer'),
+        'all_input_keys'   => array_keys($request->all()),
+      ]);
+      return Redirect::back()->withErrors(['question_csv' => 'Could not tell which assessment to import into — please reopen the Import CSV page from that assessment\'s question list and try again.']);
     }
-    return Redirect::to("admin/assessments/".encode($request->get('assessment_id'))."/import-csv")->withSuccess("Oops! Something went wrong");
-	*/
- }
+    $assessment = Assessment::where('id', $assessmentId)->select(['course_id'])->first();
+    if (!$assessment) {
+      return Redirect::back()->withErrors(['question_csv' => 'This assessment no longer exists — please reopen the Import CSV page from the assessment list and try again.']);
+    }
+
+    $file      = $request->file('question_csv');
+    $storedPath = $file->storeAs('temp', time() . '_' . $file->getClientOriginalName());
+    $fullPath   = storage_path('app') . '/' . $storedPath;
+
+    try {
+      $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($fullPath);
+    } catch (\Exception $e) {
+      return Redirect::back()->withErrors(['question_csv' => 'That file could not be read as an Excel/CSV workbook. Please upload the sample file format (download it via the link below) filled in with your questions.']);
+    }
+    $sheet       = $spreadsheet->getActiveSheet();
+    $highestRow  = $sheet->getHighestRow();
+    $highestCol  = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($sheet->getHighestColumn());
+
+    // Header row -> column-letter map, keyed by our short field names.
+    $colByKey = [];
+    for ($c = 1; $c <= $highestCol; $c++) {
+      $letter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($c);
+      $header = $this->normalizeHeader($sheet->getCell($letter . '1')->getValue());
+      if (isset(self::IMPORT_HEADER_MAP[$header])) {
+        $colByKey[self::IMPORT_HEADER_MAP[$header]] = $letter;
+      }
+    }
+
+    // Every column the importer relies on to build a usable question; if any
+    // are missing, this isn't the expected sheet — say so instead of guessing.
+    $requiredKeys = ['title', 'option_a', 'option_b', 'correct_answer', 'domain'];
+    $missingKeys  = array_diff($requiredKeys, array_keys($colByKey));
+    if ($missingKeys) {
+      $missingLabels = array_keys(array_intersect(self::IMPORT_HEADER_MAP, $missingKeys));
+      return Redirect::back()->withErrors([
+        'question_csv' => 'Wrong format: this file is missing the "' . implode('", "', array_map('ucwords', $missingLabels)) . '" column(s) the mock test question sheet needs. Please use the sample file format (download it via the link below).',
+      ]);
+    }
+
+    $cell = function ($row, $key) use ($sheet, $colByKey) {
+      return isset($colByKey[$key]) ? trim((string) $sheet->getCell($colByKey[$key] . $row)->getValue()) : '';
+    };
+
+    $imported = 0;
+
+    \DB::beginTransaction();
+    try {
+      for ($row = 2; $row <= $highestRow; $row++) {
+        $title         = $cell($row, 'title');
+        $correctAnswer = $cell($row, 'correct_answer');
+        if ($title === '' || $correctAnswer === '') {
+          continue;
+        }
+
+        $domainName = $cell($row, 'domain');
+        $domainCat  = $domainName !== '' ? Category::where('type', 1)->where('name', $domainName)->first() : null;
+        $domainId   = $domainCat->id ?? 0;
+
+        $correctLetters = array_values(array_filter(array_map('trim', preg_split('/[,\/\s]+/', strtoupper($correctAnswer)))));
+
+        $questionRow = [
+          'external_id'      => $cell($row, 'external_id') ?: null,
+          'set_type'          => 'set1',
+          'category_id'       => 1,
+          'categoryid'        => $domainId,
+          'sub_category_id'   => $domainId,
+          'course_id'         => $assessment->course_id ?? 1,
+          'assessment_id'     => $assessmentId,
+          'marks'             => 1,
+          'title'             => $title,
+          'explanation'       => $cell($row, 'rationale'),
+          'question_type'     => count($correctLetters) > 1 ? 2 : 1,
+          'question_style'    => $cell($row, 'question_style') ?: null,
+          'dificulty_level'   => $cell($row, 'difficulty') ?: null,
+          'process_group'     => $cell($row, 'process_group') ?: null,
+          'methodology'       => $cell($row, 'methodology') ?: null,
+          'cognitive_level'   => $cell($row, 'cognitive_level') ?: null,
+          'topic_category'    => $cell($row, 'topic_category') ?: null,
+          'tested_skill'      => $cell($row, 'tested_skill') ?: null,
+          'pmbok_ref'         => $cell($row, 'pmbok_ref') ?: null,
+          'agile_ref'         => $cell($row, 'agile_ref') ?: null,
+          'exam_tip'          => $cell($row, 'exam_tip') ?: null,
+          'exam_trap'         => $cell($row, 'exam_trap') ?: null,
+          'eco_task'          => $cell($row, 'eco_task') ?: null,
+          'last_reviewed'     => $this->importDate($cell($row, 'last_reviewed')),
+          'status'            => 1,
+          'created_at'        => date('Y-m-d H:i:s'),
+        ];
+        DB::table('questions')->insert($questionRow);
+        $questionId = DB::getPdo()->lastInsertId();
+
+        if ($domainId) {
+          DB::table('category_questions')->insert([
+            'question_id'     => $questionId,
+            'set_type'        => 'set1',
+            'category_id'     => 1,
+            'sub_category_id' => $domainId,
+          ]);
+        }
+
+        foreach (self::IMPORT_OPTION_LETTERS as $letter => $key) {
+          $optionText = $cell($row, $key);
+          if ($optionText === '') {
+            continue;
+          }
+          $isCorrect = in_array($letter, $correctLetters, true);
+          DB::table('question_options')->insert([
+            'question_id' => $questionId,
+            'options'     => $optionText,
+            'is_correct'  => $isCorrect ? 1 : 0,
+            'why_correct' => $isCorrect ? ($cell($row, 'rationale') ?: null) : null,
+            'why_wrong'   => !$isCorrect ? ($cell($row, 'why_' . strtolower($letter)) ?: null) : null,
+            'created_at'  => date('Y-m-d H:i:s'),
+          ]);
+        }
+
+        $imported++;
+      }
+      \DB::commit();
+    } catch (Exception $e) {
+      \DB::rollback();
+      throw $e;
+    }
+
+    if ($imported === 0) {
+      return Redirect::back()->withErrors(['question_csv' => 'Wrong format: the column headers matched, but no row had both a Question and a Correct Answer filled in. Please check the file against the sample format.']);
+    }
+
+    return Redirect::to("admin/assessments/" . encode($assessmentId) . "/questions")
+      ->withSuccess("Great! {$imported} question(s) have been imported.");
+  }
 
   public function hardDelete(Request $request){
     $id = $request->get('id');
@@ -632,11 +617,12 @@ class QuestionController extends Controller
       'question_type'     => 'required',
     ]);
 
-    // Extra question metadata merged into the update, + per-option why_wrong.
+    // Extra question metadata merged into the update, + per-option why_wrong/why_correct.
     $extra = [
       'process_group' => $request->get('process_group'),
     ];
-    $whyWrong = $request->get('why_wrong', []);
+    $whyWrong   = $request->get('why_wrong', []);
+    $whyCorrect = $request->get('why_correct', []);
 
     \DB::beginTransaction();
     try {
@@ -678,6 +664,7 @@ class QuestionController extends Controller
                   'options'       => $d,
                   'is_correct'    => $is_correct[$key] == 1 ? 1 : 0,
                   'why_wrong'     => isset($whyWrong[$key]) ? $whyWrong[$key] : null,
+                  'why_correct'   => isset($whyCorrect[$key]) ? $whyCorrect[$key] : null,
                   'created_at'    => date('Y-m-d H:i:s'),
                 ];
                 if(isset($request->file('image')[$key])) {
@@ -750,6 +737,7 @@ class QuestionController extends Controller
                   'options'       => $d,
                   'is_correct'    => $is_correct[$key] == 1 ? 1 : 0,
                   'why_wrong'     => isset($whyWrong[$key]) ? $whyWrong[$key] : null,
+                  'why_correct'   => isset($whyCorrect[$key]) ? $whyCorrect[$key] : null,
                   'created_at'    => date('Y-m-d H:i:s'),
                 ];
                 if(isset($request->file('image')[$key])) {
@@ -817,6 +805,7 @@ class QuestionController extends Controller
                   'options'       => $d,
                   'is_correct'    => $is_correct[$key] == 1 ? 1 : 0,
                   'why_wrong'     => isset($whyWrong[$key]) ? $whyWrong[$key] : null,
+                  'why_correct'   => isset($whyCorrect[$key]) ? $whyCorrect[$key] : null,
                   'created_at'    => date('Y-m-d H:i:s'),
                 ];
                 if(isset($request->file('image')[$key])) {
@@ -882,6 +871,7 @@ class QuestionController extends Controller
                   'options'       => $d,
                   'is_correct'    => $is_correct[$key] == 1 ? 1 : 0,
                   'why_wrong'     => isset($whyWrong[$key]) ? $whyWrong[$key] : null,
+                  'why_correct'   => isset($whyCorrect[$key]) ? $whyCorrect[$key] : null,
                   'created_at'    => date('Y-m-d H:i:s'),
                 ];
                 if(isset($request->file('image')[$key])) {

@@ -24,6 +24,7 @@
         "maatwebsite/excel": "^3.1",
         "tightenco/ziggy": "^0.9.4",
         "yajra/laravel-datatables": "^1.5"
+        
     },
     "require-dev": {
         "facade/ignition": "^2.5",

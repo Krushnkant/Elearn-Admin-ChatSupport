@@ -7,7 +7,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\UploadedFile;
 use Carbon\Carbon;
 //use App\Models\{User,Answer};
-use App\Models\{User, TestResult, Answer, UserVideo, Question, Category, Transaction, ChapterVideo};
+use App\Models\{User, TestResult, Answer, UserVideo, Question, Category, Transaction, ChapterVideo, SubscriptionPlan};
 use Illuminate\Support\Facades\File;
 use DataTables ,Validator, Session, Redirect, Response, DB, Config;
 
@@ -19,7 +19,7 @@ class UserController extends Controller
 
     if ($request->ajax())
     {
-        $data = User::with('Membership')->orderBy('id', 'desc');
+        $data = User::with('Membership.subscriptionPlan')->orderBy('id', 'desc');
   
 
                   return Datatables::of($data)
@@ -40,12 +40,12 @@ class UserController extends Controller
   public function create(Request $request)
   {
     $data['title'] = "Create User";
+    $data['plans'] = SubscriptionPlan::where('status', 1)->orderBy('sort_order', 'asc')->get();
     return view('admin.user.add', $data);
   }
 
   public function store(Request $request)
   {
-    //dd($request->all());
     $request->validate([
       'name'              => 'required',
       'email'             => 'required|email|unique:users',
@@ -71,7 +71,6 @@ class UserController extends Controller
       $files->move($destinationPath, $profileImage);
       $data['profile_photo_path'] = $profileImage;
     }
-    //dd($data);
     $insert_id = User::insertGetId($data);
 
     $future_timestamp = strtotime("+1 month");
@@ -80,14 +79,7 @@ class UserController extends Controller
     $data1month = $request->get('end_date').' 00:00:00';
     if($insert_id) {
 
-      $amount = 0;
-      if($request->get('planid') == 1){
-        $amount = 0;
-      }elseif($request->get('planid') == 2){
-        $amount = 1999;
-      }elseif($request->get('planid') == 3){
-        $amount = 3999;
-      }
+      $amount = optional(SubscriptionPlan::find($request->get('planid')))->annual_price ?? 0;
 
 
       $datatra = [
@@ -116,13 +108,12 @@ class UserController extends Controller
     $data['user_info'] = User::select('users.*','transactions.plan','transactions.end_date')->leftJoin('transactions', function($join) {
       $join->on('users.id', '=', 'transactions.user_id');
     })->where('users.id', $id)->first();
-    //dd($data['user_info']);
+    $data['plans'] = SubscriptionPlan::where('status', 1)->orderBy('sort_order', 'asc')->get();
     return view('admin.user.edit', $data);
   }
 
   public function update(Request $request)
   {
-    //dd($request->all());
     $id = $request->get('id');
     $request->validate([
       'name'              => 'required',
@@ -151,19 +142,11 @@ class UserController extends Controller
       $files->move($destinationPath, $profileImage);
       $data['profile_photo_path'] = $profileImage;
     }
-    //dd($data);
     $update = User::where('id', $id)->update($data);
     
     if($update) {
 
-      $amount = 0;
-      if($request->get('planid') == 1){
-        $amount = 0;
-      }elseif($request->get('planid') == 2){
-        $amount = 1999;
-      }elseif($request->get('planid') == 3){
-        $amount = 3999;
-      }
+      $amount = optional(SubscriptionPlan::find($request->get('planid')))->annual_price ?? 0;
 
       $data1month = $request->get('end_date').' 00:00:00';
 
@@ -190,20 +173,27 @@ class UserController extends Controller
   
     if ($request->ajax())
     {
-       //dd($request->all());
-    $start = $request->get("start");
-    $limit = $request->get("length");
-    $id = 627;
-    $data1 = [];
-    $count = TestResult::orderBy('id', 'DESC')->count();
-    
-    $testids = TestResult::orderBy('id', 'DESC')->limit('200')->get()->pluck('id');
-   
+    // DataTables server-side pagination: only build rows for the current page
+    // instead of computing all 200 (which fires ~15 queries per row and times out).
+    $start = (int) $request->get("start", 0);
+    $limit = (int) $request->get("length", 10);
+    $maxRows = 200;
+    $totalRecords = min(TestResult::count(), $maxRows);
+
+    $testids = TestResult::orderBy('id', 'DESC')
+        ->limit($maxRows)
+        ->pluck('id')
+        ->slice($start, $limit > 0 ? $limit : null)
+        ->values();
+
+    // Category buckets are the same for every row - fetch once, not per iteration.
+    $domain_ids    = Category::where('type', '1')->pluck('id')->toArray();
+    $knowledge_ids = Category::where('type', '2')->pluck('id')->toArray();
+    $aproch_ids    = Category::where('type', '3')->pluck('id')->toArray();
+
+    $response = [];
     foreach ($testids as $id) {
-      $categories = Category::where('status', 1)->get(['id', 'name', 'type']);
-    
         $fields = ['id', 'mock_test_id', 'question_id', 'answer_id'];
-        DB::enableQueryLog(); // Enable query log
         $data = Answer::where('mock_test_id', $id)
             ->select($fields)
             ->withCount(['answer as is_correct' => function ($query) {
@@ -226,23 +216,21 @@ class UserController extends Controller
      
         $total_attempt = TestResult::where('user_id', $assessment->user_id)->count();
 
-        $total = Answer::where('mock_test_id', $id)->select(['question_id'])->count();
+        // Reuse the answers already loaded above instead of re-querying the
+        // large answers table twice more per row.
+        $total = $data->count();
+        $q_ids = $data->pluck('question_id')->toArray();
 
-        
-    $q_ids = Answer::where('mock_test_id', $id)->pluck('question_id')->toArray();        
-    $domain_ids = Category::where('type', '1')->pluck('id')->toArray();
         $domain_ques = Question::whereIn('id', $q_ids)
                                 ->whereIn('category_id', $domain_ids)
                 ->pluck('id')
                                 ->toArray();
-    
-    $knowledge_ids = Category::where('type', '2')->pluck('id')->toArray();
+
     $knowledge_ques = Question::whereIn('id', $q_ids)
                                 ->whereIn('categoryid', $knowledge_ids)
                 ->pluck('id')
                                 ->toArray();
-                
-    $aproch_ids = Category::where('type', '3')->pluck('id')->toArray();
+
     $aproch_ques = Question::whereIn('id', $q_ids)
                                 ->whereIn('sub_category_id', $aproch_ids)
                 ->pluck('id')
@@ -326,20 +314,57 @@ class UserController extends Controller
        
       }
      //dd($response);
-       return Datatables::of($response)->editColumn('created_at', function($response){
+       return Datatables::of($response)
+                  ->skipPaging()
+                  ->setTotalRecords($totalRecords)
+                  ->editColumn('created_at', function($response){
                     return date(Config::get('constants.DATE_FORMAT'), strtotime($response['assessment']->assessment_campletion_date));
                   }) ->escapeColumns('status')->addColumn('action', function($response){
-       
-                           $btn = '<a href="'.$response['pdf_download'].'" class="edit btn btn-info btn-sm"><i class="fa fa-download"></i></a>';
-                           $btn = $btn .' <a href="javascript:void(0)" id="905"  class="edit edit-data btn btn-primary btn-sm">Report</a>';
-                          
-         
+
+                           // Generate the PDF on demand from the test result id, so there is
+                           // no dependency on a pre-saved file or the production domain.
+                           $downloadUrl = url('admin/repors/'.$response['assessment']->id.'/download');
+                           $btn = '<a href="'.$downloadUrl.'" target="_blank" class="edit btn btn-info btn-sm"><i class="fa fa-download"></i></a> ';
+                           $btn = $btn .'<a href="javascript:void(0)" id="905"  class="edit edit-data btn btn-primary btn-sm">Report</a>';
+
                             return $btn;
                     })
                     ->rawColumns(['action'])->addIndexColumn()->make(true);
     }
      
     return view('admin.user.report', $data);
+  }
+
+  /**
+   * Generate and stream the assessment result PDF on demand.
+   * Avoids relying on a pre-saved file / hardcoded production URL.
+   */
+  public function downloadReport(Request $request, $id)
+  {
+    $testResult = TestResult::find($id);
+    if (!$testResult) {
+      abort(404, 'Test result not found.');
+    }
+
+    $owner = User::find($testResult->user_id);
+    if (!$owner) {
+      abort(404, 'Result owner not found.');
+    }
+
+    // Reuse the existing report builder; it expects a request whose user() is the result owner.
+    $sub = Request::create('/admin/repors/'.$id.'/test-results', 'GET');
+    $sub->setUserResolver(function () use ($owner) {
+      return $owner;
+    });
+
+    $payload = json_decode($this->testResultgraf($sub, $id)->getContent(), true);
+    if (empty($payload['success'])) {
+      abort(404, 'No report data available for this result.');
+    }
+
+    return \PDF::setPaper('a4')
+      ->loadView('admin.pdf.test-results', ['data' => $payload, 'user' => $owner])
+      ->download('assessment-report-'.$id.'.pdf');
   }
 
 
@@ -350,7 +375,6 @@ class UserController extends Controller
         $categories = Category::where('status', 1)->get(['id', 'name', 'type']);
     
         $fields = ['id', 'mock_test_id', 'question_id', 'answer_id'];
-        DB::enableQueryLog(); // Enable query log
         $data = Answer::where('mock_test_id', $id)
             ->select($fields)
             ->withCount(['answer as is_correct' => function ($query) {
@@ -361,11 +385,7 @@ class UserController extends Controller
                 'question:id,category_id,categoryid,sub_category_id',
             ])
             ->get();
-         //dd($data->toArray());
-        //  dd($data->toArray());
-        //    $queries =DB::getQueryLog();
-        //     dd($queries);
-    
+
         $allDomainAnswers = $data->filter(function ($question) {
       
             return $question->question->category->type == Category::DOMAIN;
@@ -415,16 +435,6 @@ class UserController extends Controller
                     ->select(['id', 'category_id', \DB::raw('id as correct')]);
             }])
             ->get();
-      //echo "<pre>"; print_r($domain);die;
-        /*->whereHas('question', function($query) {
-                            $query->where('category_id', 2)
-                                    ->select(['id', 'category_id',])->count();
-                        })*/
-        /*->withCount(['answer as is_correct' => function($query) {
-                            $query->where('is_correct', 1)->count();
-                        }])
-
-                        ->get();*/
 
         $assessment = TestResult::where('id', $id)
             ->select(['id', 'assessment_id', 'created_at as assessment_campletion_date'])
@@ -455,14 +465,6 @@ class UserController extends Controller
                                 ->toArray();
     
     
-       /* $group['domain_correct'] = Answer::where('mock_test_id', $id)
-                                            ->whereIn('question_id', $q_ids)
-                                            ->select($fields)
-                                            ->withCount(['answer as is_correct' => function($query) {
-                                                $query->where('is_correct', 1);
-                                            }]);
-                                            //->count();*/
-
     $domain_correct = 0;
     $knowledge_correct = 0;
     $aproch_correct = 0;
@@ -485,7 +487,7 @@ class UserController extends Controller
      }
      
      
-     /*===============================Domain===================  */
+     // Domain sub-category scores
      $final_domain_array = array();
      foreach($allDomainCategory->values()->toArray() as $v)
      {
@@ -513,7 +515,7 @@ class UserController extends Controller
                         );
        $final_domain_array[] = $ab;
      }
-     /*===============================Knoledge===================  */
+     // Knowledge sub-category scores
      $final_Knowledge_array = array();
      foreach($allKnowledgeCategory->values()->toArray() as $v)
      {
@@ -542,7 +544,7 @@ class UserController extends Controller
        $final_Knowledge_array[] = $ab;
      }
      
-     /*===============================Approch===================  */
+     // Approach sub-category scores
      $final_Approch_array = array();
      foreach($allApprochCategory->values()->toArray() as $v)
      {

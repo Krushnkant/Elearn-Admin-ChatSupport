@@ -31,9 +31,9 @@ class Course extends Model
 
  	public function getImageAttribute($value) {
 		if($value) {
-			return asset('https://chatsupport.co.in/public/course/'.$value);
+			return asset(config('app.content_asset_url').'/public/course/'.$value);
 		}
-		return asset('https://chatsupport.co.in/public/no-image.png/');
+		return asset(config('app.content_asset_url').'/public/no-image.png/');
 	}
 
 	public function getOriginalImageAttribute()

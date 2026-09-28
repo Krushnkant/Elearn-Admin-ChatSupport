@@ -43,17 +43,24 @@ class VideoController extends Controller
   }
 
   public function store(Request $request)
-  { 
+  {
     $request->validate([
       'title'   		=> 'required',
 	  'description'   => 'required',
-      'video'   => 'required',
+      'video'     => 'required_without:video_url',
+      // Same leniency as Live Video's video_url field (LiveVideoLinkController) —
+      // just a plain string, not Laravel's strict `url` rule, since that rule
+      // rejects perfectly pasteable links (missing scheme, query-string quirks,
+      // etc.) that a browser/video player will still happily load.
+      'video_url' => 'required_without:video|nullable|string',
+      'duration'  => 'nullable|string|max:20',
     ]);
 //echo "dddd"; die;
     $data = [
       'title'       => $request->get('title'),
 	  'description' => $request->get('description'),
       'chapter_id'  => decode($request->get('chapter_id')),
+      'duration'    => $request->get('duration'),
       'status'      => $request->get('status') == 1 ? 1 : 0,
       'created_at'  => date('Y-m-d H:i:s'),
     ];
@@ -64,9 +71,13 @@ class VideoController extends Controller
       $rand = md5(time() . mt_rand(100000000, 999999999));
       $profileImage = $rand . "." . @$files->getClientOriginalExtension();
       $files->move($destinationPath, $profileImage);
-	  
-	  
+
+
       $data['video'] = $profileImage;
+    } elseif($request->filled('video_url')) {
+      // A pasted link (YouTube, Vimeo, CDN, ...) is stored as-is — see
+      // ChapterVideo::getVideoAttribute(), which leaves full URLs untouched.
+      $data['video'] = trim($request->get('video_url'));
     }
 
     if($request->hasFile('thumbnail')) {
@@ -95,6 +106,12 @@ class VideoController extends Controller
     $data['chapter_id'] = $chapter_id;
     $data['id'] = $id;
     $data['video_info'] = ChapterVideo::where('id', decode($id))->first();
+
+    if (!$data['video_info']) {
+      return Redirect::to("admin/chapters/".$chapter_id."/videos")
+        ->withWarning("That video could not be found — it may have been deleted, or the link is out of date.");
+    }
+
     return view('admin.videos.edit', $data);
   }
 
@@ -105,12 +122,14 @@ class VideoController extends Controller
     $request->validate([
       'title' => 'required',
 	  'description'   => 'required',
+      'duration'  => 'nullable|string|max:20',
     ]);
 
     $data = [
       'title'       => $request->get('title'),
 	  'description' => $request->get('description'),
       'chapter_id'  => decode($request->get('chapter_id')),
+      'duration'    => $request->get('duration'),
       'status'      => $request->get('status') == 1 ? 1 : 0,
       'created_at'  => date('Y-m-d H:i:s'),
     ];
@@ -126,6 +145,9 @@ class VideoController extends Controller
       $profileImage = $rand . "." . @$files->getClientOriginalExtension();
       $files->move($destinationPath, $profileImage);
       $data['video'] = $profileImage;
+    } elseif($request->filled('video_url')) {
+      // Switching to a pasted link — stored as-is, see ChapterVideo::getVideoAttribute().
+      $data['video'] = trim($request->get('video_url'));
     }
 
     if($request->hasFile('thumbnail')) {

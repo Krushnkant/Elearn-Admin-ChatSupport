@@ -88,6 +88,12 @@ class BookController extends Controller
     $data['course_id'] = $course_id;
     $data['id'] = $id;
     $data['info'] = CourseVideo::where(['course_id' => decode($course_id), 'id' => decode($id)])->first();
+
+    if (!$data['info']) {
+      return Redirect::to("admin/courses/".$course_id."/books")
+        ->withWarning("That book could not be found — it may have been deleted, or the link is out of date.");
+    }
+
     return view('admin.book.edit', $data);
   }
 
@@ -108,7 +114,7 @@ class BookController extends Controller
     ];
 
     if($request->hasFile('image')) {
-      $d_file = 'public/ebooks/' . $book->originalPreview;
+      $d_file = 'public/course_video/' . $book->originalPreview;
       File::delete($d_file);
       $files = $request->file('image');
       $destinationPath = 'public/course_video/'; // upload path

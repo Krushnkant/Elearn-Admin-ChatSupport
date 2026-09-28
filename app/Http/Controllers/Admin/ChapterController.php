@@ -70,6 +70,12 @@ class ChapterController extends Controller
     $data['course_id'] = $course_id;
     $data['id'] = $id;
     $data['chapter_info'] = Chapter::where(['course_id' => decode($course_id), 'id' => decode($id)])->first();
+
+    if (!$data['chapter_info']) {
+      return Redirect::to("admin/courses/".$course_id."/chapters")
+        ->withWarning("That chapter could not be found — it may have been deleted, or the link is out of date.");
+    }
+
     return view('admin.chapter.edit', $data);
   }
 

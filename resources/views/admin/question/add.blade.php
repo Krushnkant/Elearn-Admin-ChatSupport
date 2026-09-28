@@ -236,6 +236,10 @@
                                                 </div>
 
                                                 <div class="form-group col-md-12 ">
+                                                    <label>Why Correct <small class="text-muted">(shown when this option is the correct choice)</small></label>
+                                                    <textarea name="why_correct[]" class="form-control" rows="1" placeholder="Why this option is correct"></textarea>
+                                                </div>
+                                                <div class="form-group col-md-12 ">
                                                     <label>Why Wrong <small class="text-muted">(shown when this option is a wrong choice)</small></label>
                                                     <textarea name="why_wrong[]" class="form-control" rows="1" placeholder="Why this option is incorrect"></textarea>
                                                 </div>
@@ -308,6 +312,10 @@
                                                         <input type="radio" checked name="is_correct[${x}]" value="0"> No
                                                         </label>
                                                     </div>
+                                                </div>
+                                                <div class="form-group col-md-12 ">
+                                                    <label>Why Correct <small class="text-muted">(shown when this option is the correct choice)</small></label>
+                                                    <textarea name="why_correct[]" class="form-control" rows="1" placeholder="Why this option is correct"></textarea>
                                                 </div>
                                                 <div class="form-group col-md-12 ">
                                                     <label>Why Wrong <small class="text-muted">(shown when this option is a wrong choice)</small></label>

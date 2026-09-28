@@ -15,7 +15,7 @@ class StudyMaterialController extends Controller
 	public function index(Request $request)
 	{
 		$books = StudyMaterial::where('status', 1)
-			->with(['activeLessons'])
+			->with(['activeLessons', 'quiz:id,title,number_of_questions,duration_mins,passing_score,max_attempts,status'])
 			->orderBy('sort_order', 'asc')
 			->get()
 			->map(function ($b) {
@@ -30,6 +30,19 @@ class StudyMaterialController extends Controller
 					];
 				})->values();
 
+				// Knowledge Check quiz for this book (only when linked and active).
+				$quiz = null;
+				if ($b->quiz && (int) $b->quiz->status === 1) {
+					$quiz = [
+						'assessment_id'       => $b->quiz->id,
+						'title'               => $b->quiz->title,
+						'number_of_questions' => $b->quiz->number_of_questions,
+						'duration_mins'       => $b->quiz->duration_mins,
+						'passing_score'       => $b->quiz->passing_score,
+						'max_attempts'        => $b->quiz->max_attempts,
+					];
+				}
+
 				return [
 					'id'          => $b->id,
 					'title'       => $b->title,
@@ -37,6 +50,7 @@ class StudyMaterialController extends Controller
 					'icon'        => $b->icon,
 					'color'       => $b->color,
 					'lessons'     => $lessons,
+					'quiz'        => $quiz,
 				];
 			});
 

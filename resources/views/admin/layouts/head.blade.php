@@ -38,7 +38,7 @@
 </head>
 
 <script type="text/javascript">
-  var SITEURL = '{{URL::to('')}}';
+  var SITEURL = window.location.origin || '{{ URL::to('') }}';
   $.ajaxSetup({
       headers: {
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

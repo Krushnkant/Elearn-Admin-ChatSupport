@@ -8,6 +8,7 @@ use App\Http\Resources\UserResource;
 use Illuminate\Contracts\Support\JsonableInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 use App\Models\{User};
 use Response, DB, Mail;
 
@@ -151,46 +152,27 @@ class AuthController extends Controller
             if($user) {
                 if($type == 'email') {
                     $name = $request->get('name');
-                   /* Mail::send('mail.registeration-otp', ['otp' => $otp, 'name' => $name], function ($message) use($request) {
-                        $message->to($request->get('username'), '')->subject("Knowledgewood verification otp");
-                    }); */
-					$message = 'Your Knowledgewoods App Verification Code is '.$otp;
-					$data = array(
-						"sender" => array(
-							"email" => 'info@knowledgewoods.com',
-							"name" => 'Knowledgewoods'         
-						),
-						"to" => array(
-							array(
-								"email" => $request->get('username'),
-								"name" => $name 
-							)
-						),
-						"subject" => 'Knowledgewood verification otp',
-						"htmlContent" => $message
-					);
-					//echo $message; die;
-					$ch = curl_init();
-					curl_setopt($ch, CURLOPT_URL, 'https://api.sendinblue.com/v3/smtp/email');
-					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-					curl_setopt($ch, CURLOPT_POST, 1);
-					curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-
-					$headers = array();
-					$headers[] = 'Accept: application/json';
-					$headers[] = 'Api-Key: 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';
-					$headers[] = 'Content-Type: application/json';
-					curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-					$result = curl_exec($ch);
-					if (curl_errno($ch)) {
-						echo 'Error:' . curl_error($ch);
-					}
-					curl_close($ch);
+                    try {
+                        Mail::send('mail.registeration-otp', ['otp' => $otp, 'name' => $name], function ($message) use($request) {
+                            $message->to($request->get('username'), '')->subject("Knowledgewood verification otp");
+                        });
+                        Log::info('Register OTP email sent', [
+                            'username' => $request->get('username'),
+                        ]);
+                    } catch (\Exception $e) {
+                        Log::error('Register OTP email send failed', [
+                            'username' => $request->get('username'),
+                            'error'    => $e->getMessage(),
+                        ]);
+                    }
                 } else {
-                    $this->sendOtp($user, [
+                    $otpResponse = $this->sendOtp($user, [
                         'otp' => $otp,
                         'mobile' => trim($request->get('username'))
+                    ]);
+                    Log::info('Register OTP SMS send attempted', [
+                        'username' => $request->get('username'),
+                        'response' => $otpResponse,
                     ]);
                 }
 
@@ -328,6 +310,13 @@ class AuthController extends Controller
         ));
 
         $response = curl_exec($curl);
+
+        if (curl_errno($curl)) {
+            Log::error('sendOtp SMS API call failed (curl error)', [
+                'mobile' => $para['mobile'] ?? null,
+                'error'  => curl_error($curl),
+            ]);
+        }
 
         curl_close($curl);
         // echo json_encode($messagePayload);
@@ -485,13 +474,27 @@ class AuthController extends Controller
 
             if($username == 'email') {
                 $name = $request->get('name');
-                Mail::send('mail.registeration-otp', ['otp' => $otp, 'name' => $name], function ($message) use($request) {
-                    $message->to($request->get('username'), '')->subject("Knowledgewood verification otp");
-                });
+                try {
+                    Mail::send('mail.registeration-otp', ['otp' => $otp, 'name' => $name], function ($message) use($request) {
+                        $message->to($request->get('username'), '')->subject("Knowledgewood verification otp");
+                    });
+                    Log::info('Resend OTP email sent', [
+                        'username' => $request->get('username'),
+                    ]);
+                } catch (\Exception $e) {
+                    Log::error('Resend OTP email send failed', [
+                        'username' => $request->get('username'),
+                        'error'    => $e->getMessage(),
+                    ]);
+                }
             } else {
-                $this->sendOtp($user, [
+                $otpResponse = $this->sendOtp($user, [
                     'otp' => $otp,
                     'mobile' => trim($request->get('username'))
+                ]);
+                Log::info('Resend OTP SMS send attempted', [
+                    'username' => $request->get('username'),
+                    'response' => $otpResponse,
                 ]);
             }
             $update = User::where('id', $user->id)->update($data);

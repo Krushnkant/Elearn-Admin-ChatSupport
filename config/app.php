@@ -58,6 +58,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Content Asset Host
+    |--------------------------------------------------------------------------
+    |
+    | Uploaded course/chapter/book files (videos, PDFs, thumbnails) are served
+    | from this host by the Course/CourseVideo/ChapterVideo model accessors.
+    | Production points this at the live asset server; local/dev environments
+    | should set CONTENT_ASSET_URL to their own APP_URL so files uploaded
+    | locally are actually downloadable from where they were saved.
+    |
+    */
+
+    'content_asset_url' => env('CONTENT_ASSET_URL', 'https://chatsupport.co.in'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

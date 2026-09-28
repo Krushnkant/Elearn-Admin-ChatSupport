@@ -84,15 +84,11 @@
                                 <div class="form-group col-md-6 ">
                                   <label for="planid">Plan<span class="text-danger">*</span></label><br>
                                   <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                    <label class="btn btn-secondary active">
-                                      <input type="radio" name="planid" id="active" autocomplete="off" value="1" {{ $user_info->plan == 1 ? 'checked' : '' }} > Free
-                                    </label>
-                                    <label class="btn btn-secondary">
-                                      <input type="radio" name="planid" id="inactive" autocomplete="off" value="2" {{ $user_info->plan == 2 ? 'checked' : '' }} > Silver
-                                    </label>
-                                    <label class="btn btn-secondary">
-                                      <input type="radio" name="planid" id="inactive" autocomplete="off" value="3" {{ $user_info->plan == 3 ? 'checked' : '' }} > Golden
-                                    </label>
+                                    @foreach($plans as $plan)
+                                      <label class="btn btn-secondary {{ $user_info->plan == $plan->id ? 'active' : '' }}">
+                                        <input type="radio" name="planid" autocomplete="off" value="{{ $plan->id }}" {{ $user_info->plan == $plan->id ? 'checked' : '' }}> {{ $plan->name }}
+                                      </label>
+                                    @endforeach
                                   </div>
                                 </div>
                                  <?php

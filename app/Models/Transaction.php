@@ -31,4 +31,17 @@ class Transaction extends Model
             case 3: return 'Gold';
         }
     }
+
+    // Raw plan id, bypassing getPlanAttribute() above (which only understands
+    // the legacy 3-tier Free/Silver/Gold names used by the paywall gating in
+    // QuestionController). Used by the 5-tier subscription_plans catalogue.
+    public function getPlanIdAttribute()
+    {
+        return $this->attributes['plan'] ?? null;
+    }
+
+    public function subscriptionPlan()
+    {
+        return $this->belongsTo(SubscriptionPlan::class, 'plan');
+    }
 }

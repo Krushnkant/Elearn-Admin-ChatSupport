@@ -8,31 +8,33 @@ use Str;
 class ChapterVideo extends Model
 {
     protected $guarded = [];
-    protected $appends = ['video_duration','is_lock'];
+    protected $appends = ['is_lock'];
 
     public function chapter()
     {
     	return $this->belongsTo(Chapter::class);
     }
 
-    public function getVideoDurationAttribute()
-    {
-    	return "5:30:00";
-    }
-   
+
     public function getImageThumbAttribute($value)
     {
         if($value) {
-            return asset('https://chatsupport.co.in/public/chapter/videos/thumbnail/'.$value);
+            return asset(config('app.content_asset_url').'/public/chapter/videos/thumbnail/'.$value);
         }
-    	return asset('https://chatsupport.co.in/public/default-video.jpg');
+    	return asset(config('app.content_asset_url').'/public/default-video.jpg');
     }
 
     public function getVideoAttribute($value) {
-        if($value) {
-            return asset('https://chatsupport.co.in/public/chapter/videos/'.$value);
+        if(!$value) {
+            return '';
         }
-        return '';
+        // A pasted link (YouTube, Vimeo, CDN, ...) is stored as-is; an
+        // uploaded file is stored as just its filename, so it needs the
+        // storage path prefixed.
+        if (preg_match('/^https?:\/\//i', $value)) {
+            return $value;
+        }
+        return asset(config('app.content_asset_url').'/public/chapter/videos/'.$value);
     }
 
     public function userVideos()

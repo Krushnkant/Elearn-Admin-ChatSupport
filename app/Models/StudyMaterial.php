@@ -21,4 +21,10 @@ class StudyMaterial extends Model
     {
         return $this->lessons()->where('status', 1);
     }
+
+    // The book's "Knowledge Check" quiz (null when the book has none).
+    public function quiz()
+    {
+        return $this->belongsTo(Assessment::class, 'assessment_id');
+    }
 }

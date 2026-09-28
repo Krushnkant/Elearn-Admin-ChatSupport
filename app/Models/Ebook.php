@@ -16,7 +16,7 @@ class Ebook extends Model
 
     public function getImageAttribute($value) {
         if($value) {
-            return asset('https://chatsupport.co.in/public/ebooks/'.$value);
+            return asset(config('app.content_asset_url').'/public/ebooks/'.$value);
         }
         return '';
     }
@@ -28,9 +28,9 @@ class Ebook extends Model
 
     public function getEbookAttribute($value) {
         if($value) {
-            return asset('https://chatsupport.co.in/public/ebooks/'.$value);
+            return asset(config('app.content_asset_url').'/public/ebooks/'.$value);
         }
-        return asset('https://chatsupport.co.in/public/no-image.png/');
+        return asset(config('app.content_asset_url').'/public/no-image.png/');
     }
 
     public function getOriginalEbookAttribute()

@@ -27,9 +27,15 @@ class Question extends Model
   public function category()
   {
     return $this->belongsTo(Category::class,'sub_category_id','id');
-    
+
   }
- 
+
+  // PMP Domain = sub_category_id (type 1); Knowledge Area = categoryid (type 2).
+  public function knowledgeArea()
+  {
+    return $this->belongsTo(Category::class,'categoryid','id');
+  }
+
   public function categoryByType()
   {
     return $this->hasMany(Category::class,'type','category_id','id','sub_category_id');

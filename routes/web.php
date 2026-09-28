@@ -105,6 +105,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/admin/dashboard', functio
     Route::post('/update','UserResultController@update');
 
     Route::get('repors/','UserController@report');
+    Route::get('repors/{id}/download', 'UserController@downloadReport');
     Route::get('repors/{id}/test-results', 'UserController@testResultgraf');
 
     // Route For Course List
@@ -200,5 +201,33 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/admin/dashboard', functio
         Route::post('/{bookId}/lessons/store','StudyMaterialLessonController@store');
         Route::get('/{bookId}/lessons/{id}/edit','StudyMaterialLessonController@edit');
         Route::post('/{bookId}/lessons/update','StudyMaterialLessonController@update');
+    });
+
+    Route::group(['prefix' => 'hub-cards'], function () {
+        Route::get('/','HubCardController@index');
+        Route::get('/create','HubCardController@create');
+        Route::post('/store','HubCardController@store');
+        Route::get('/{id}/edit','HubCardController@edit');
+        Route::post('/update','HubCardController@update');
+    });
+
+    Route::group(['prefix' => 'subscription-plans'], function () {
+        Route::get('/','SubscriptionPlanController@index');
+        Route::get('/create','SubscriptionPlanController@create');
+        Route::post('/store','SubscriptionPlanController@store');
+        Route::get('/{id}/edit','SubscriptionPlanController@edit');
+        Route::post('/update','SubscriptionPlanController@update');
+    });
+
+    // App/website copy editable from the admin panel (key/value content_settings)
+    Route::group(['prefix' => 'content-management'], function () {
+        Route::get('/','ContentManagementController@index');
+        Route::post('/mock-test','ContentManagementController@updateMockTest');
+    });
+
+    // "Get in Touch" enquiries submitted from the student site
+    Route::group(['prefix' => 'enquiries'], function () {
+        Route::get('/','EnquiryController@index');
+        Route::get('/{id}','EnquiryController@show');
     });
 });

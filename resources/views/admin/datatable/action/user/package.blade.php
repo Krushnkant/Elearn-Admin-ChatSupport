@@ -1,5 +1,5 @@
 @if(isset($membership['plan']) && isset($membership['plan']) != "" )
-<?php 
+<?php
 
 $today = strtotime($membership['end_date']);
 $myBirthDate = strtotime(date('Y-m-d h:i:s'));
@@ -11,9 +11,10 @@ if($days > 0){
 }
 //printf("I'm %d days old.", round(abs($today-$myBirthDate)/60/60/24));
 
+$planName = $membership['subscriptionPlan']['name'] ?? $membership['plan'];
 ?>
-   <p>{{ $membership['plan'] }} ( {{ $day  }} left to expire )</p>
- 
+   <p>{{ $planName }} ( {{ $day  }} left to expire )</p>
+
 @else
    <p>Free</p>
 @endif

@@ -81,18 +81,14 @@
                                 <div class="form-group col-md-6 ">
                                   <label for="planid">Plan<span class="text-danger">*</span></label><br>
                                   <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                    <label class="btn btn-secondary active">
-                                      <input type="radio" name="planid" id="active" autocomplete="off" value="1" checked> Free
-                                    </label>
-                                    <label class="btn btn-secondary">
-                                      <input type="radio" name="planid" id="inactive" autocomplete="off" value="2"> Silver
-                                    </label>
-                                    <label class="btn btn-secondary">
-                                      <input type="radio" name="planid" id="inactive" autocomplete="off" value="3"> Golden
-                                    </label>
+                                    @foreach($plans as $index => $plan)
+                                      <label class="btn btn-secondary {{ $index === 0 ? 'active' : '' }}">
+                                        <input type="radio" name="planid" autocomplete="off" value="{{ $plan->id }}" {{ $index === 0 ? 'checked' : '' }}> {{ $plan->name }}
+                                      </label>
+                                    @endforeach
                                   </div>
 
-                                    
+
                                 </div>
                                 
                                 <div class="form-group col-md-6">

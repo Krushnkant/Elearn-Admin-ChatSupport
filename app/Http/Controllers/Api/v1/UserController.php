@@ -27,6 +27,47 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * Update the logged-in user's own profile (nickname/gender/bio).
+     * Unlike the legacy `update-user` (public, matched by a client-supplied
+     * username — used only for the post-signup profile-completion step,
+     * before a token exists), this is authenticated and always targets the
+     * token's own user, so it can't be used to edit someone else's profile.
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $validator = Validator::make($request->all(), [
+            'nickname' => 'nullable|string|max:50',
+            'gender'   => 'nullable|string|max:20',
+            'bio'      => 'nullable|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ]);
+        }
+
+        $data = array_filter([
+            'nickname' => $request->get('nickname'),
+            'gender'   => $request->get('gender'),
+            'bio'      => $request->get('bio'),
+        ], function ($v) { return $v !== null; });
+
+        if (!empty($data)) {
+            User::where('id', $user->id)->update($data);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile updated successfully.',
+            'data'    => new UserResource(User::find($user->id)),
+        ]);
+    }
+
     public function testResult(Request $request, $id)
     {
 

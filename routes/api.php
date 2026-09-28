@@ -38,14 +38,14 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'v1' => 'v1.'], functio
     Route::post('forget-password', 'AuthController@forgetPassword');
     Route::post('resend-otp', 'AuthController@forgetPassword');
     Route::post('recover-password', 'AuthController@updatePassword');
-    Route::get('mock-test', 'AssessmentController@mockTest');
     Route::post('post-answer-test2', 'AnswerController@store2');
 });
 
 Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'v1' => 'v1.', 'middleware' => 'auth:api'], function () {
     Route::post('post-answer-test', 'AnswerController@store1');
-    
+
     Route::get('home', 'HomeController@index');
+    Route::get('mock-test', 'AssessmentController@mockTest');
     Route::get('category', 'CategoryController@index');
     Route::get('category-list', 'CategoryController@categorylist');
     Route::resource('courses', 'CourseController')->only(['index', 'show']);
@@ -54,6 +54,14 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'v1' => 'v1.', 'middlew
 	Route::post('{assessment_id}/questions-start-test/{set}', 'QuestionController@startTestNew');
     Route::get('{course_id}/assessment', 'AssessmentController@index');
     Route::get('user-profile', 'UserController@index');
+    Route::post('update-profile', 'UserController@updateProfile');
+    Route::get('notification-settings', 'NotificationSettingController@index');
+    Route::post('notification-settings', 'NotificationSettingController@update');
+    Route::get('search', 'SearchController@index');
+    Route::get('notifications', 'NotificationController@index');
+    Route::get('notifications-unread-count', 'NotificationController@unreadCount');
+    Route::post('notifications-mark-read', 'NotificationController@markRead');
+    Route::post('notifications-mark-all-read', 'NotificationController@markAllRead');
     Route::get('e-book', 'QuestionController@ebookList');
     Route::post('post-answer', 'AnswerController@store');
     
@@ -76,16 +84,40 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'v1' => 'v1.', 'middlew
     //React Project
     //HOME API
     Route::get('course-list', 'HomeController@courseList');
+    Route::get('all-courses', 'CourseController@allCourses');
+    Route::get('{id}/course-rating', 'CourseController@rating');
+    Route::post('course-rate', 'CourseController@rate');
+    Route::get('course-bookmark-ids', 'CourseBookmarkController@ids');
+    Route::post('course-bookmark-toggle', 'CourseBookmarkController@toggle');
+    Route::get('course-bookmarks', 'CourseBookmarkController@index');
     Route::get('ebook-list', 'HomeController@ebookList');
     Route::get('mocktest-list', 'HomeController@mocktestList');
     Route::get('live-videos', 'LiveVideoController@index');
+    Route::get('live-video-seen-ids', 'LiveVideoSeenController@ids');
+    Route::post('live-video-seen', 'LiveVideoSeenController@store');
     Route::get('study-materials', 'StudyMaterialController@index');
+    Route::get('subscription-plans', 'SubscriptionPlanController@index');
     Route::get('mock-tests', 'PmpMockTestController@index');
+    Route::post('contact', 'ContactController@send');
+    Route::get('bookmarks', 'BookmarkController@index');
+    Route::get('bookmark-ids', 'BookmarkController@ids');
+    Route::post('bookmark-toggle', 'BookmarkController@toggle');
+    Route::get('lesson-bookmarks', 'LessonBookmarkController@index');
+    Route::get('lesson-bookmark-ids', 'LessonBookmarkController@ids');
+    Route::post('lesson-bookmark-toggle', 'LessonBookmarkController@toggle');
+    Route::get('lesson-notes', 'LessonNoteController@index');
+    Route::post('lesson-notes', 'LessonNoteController@store');
+    Route::post('lesson-notes-delete', 'LessonNoteController@destroy');
     Route::get('mock-test-builder-options', 'MockTestBuilderController@options');
+    Route::get('mock-test-builder-count', 'MockTestBuilderController@count');
+    Route::post('mock-test-builder-build', 'MockTestBuilderController@build');
     Route::get('mock-tests/{assessment}/questions', 'PmpExamController@questions');
+    Route::get('mock-tests/{assessment}/progress', 'PmpExamController@getProgress');
+    Route::post('mock-tests/{assessment}/progress', 'PmpExamController@saveProgress');
     Route::post('mock-tests/{assessment}/submit', 'PmpExamController@submit');
     Route::get('mock-test-results/{result}', 'PmpExamController@result');
     Route::get('mock-test-results/{result}/review', 'PmpExamController@review');
+    Route::get('my-progress', 'PmpExamController@myProgress');
 
     //Explore Course
     Route::get('explore', 'HomeController@explore');

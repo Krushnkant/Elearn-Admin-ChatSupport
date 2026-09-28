@@ -109,8 +109,7 @@
           },*/
         ],
         ajax: {
-          //url: "https://chatsupport.co.in/admin/users",
-          url: "{{ url('admin/users') }}",
+          url: '{{ url("admin/users") }}',
           type: 'GET',
         },
         "fnDrawCallback": function (oSettings) {

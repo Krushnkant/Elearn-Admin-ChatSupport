@@ -92,6 +92,42 @@
                </a>
             </li>
 
+            <li class="nav-item has-treeview {{ (request()->is('admin/hub-cards') || request()->is('admin/hub-cards/*')) ? 'active' : ''}}">
+               <a href="{{ url('admin/hub-cards') }}" class="nav-link">
+                  <i class="nav-icon fa fa-th-large" aria-hidden="true"></i>
+                  <p class=" ml-2">
+                     Learning Hub
+                  </p>
+               </a>
+            </li>
+
+            <li class="nav-item has-treeview {{ (request()->is('admin/subscription-plans') || request()->is('admin/subscription-plans/*')) ? 'active' : ''}}">
+               <a href="{{ url('admin/subscription-plans') }}" class="nav-link">
+                  <i class="nav-icon fa fa-credit-card" aria-hidden="true"></i>
+                  <p class=" ml-2">
+                     Subscription Plans
+                  </p>
+               </a>
+            </li>
+
+            <li class="nav-item has-treeview {{ (request()->is('admin/content-management') || request()->is('admin/content-management/*')) ? 'active' : ''}}">
+               <a href="{{ url('admin/content-management') }}" class="nav-link">
+                  <i class="nav-icon fa fa-edit" aria-hidden="true"></i>
+                  <p class=" ml-2">
+                     Content Management
+                  </p>
+               </a>
+            </li>
+
+            <li class="nav-item has-treeview {{ (request()->is('admin/enquiries') || request()->is('admin/enquiries/*')) ? 'active' : ''}}">
+               <a href="{{ url('admin/enquiries') }}" class="nav-link">
+                  <i class="nav-icon fa fa-envelope" aria-hidden="true"></i>
+                  <p class=" ml-2">
+                     Enquiries
+                  </p>
+               </a>
+            </li>
+
             <li class="nav-item has-treeview {{ (request()->is('admin/repors') || request()->is('admin/repors/*')) ? 'active' : ''}}">
                <a href="{{ url('admin/repors') }}" class="nav-link">
                   <i class="nav-icon fa fa-book" aria-hidden="true"></i>

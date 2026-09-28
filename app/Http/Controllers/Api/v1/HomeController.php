@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\{User, Category, Course, Question, Question_option, Answer, TestResult, Ebook, Assessment};
+use App\Models\{User, Category, Course, Question, Question_option, Answer, TestResult, Ebook, Assessment, HubCard};
 use App\Http\Resources\UserResource;
 use Illuminate\Contracts\Support\JsonableInterface;
 use Illuminate\Support\Facades\Validator;
@@ -42,6 +42,11 @@ class HomeController extends Controller
 
 	  	// Per-student dashboard stats (real progress for the logged-in user).
 	  	$data['stats'] = $this->userStats(optional($request->user())->id);
+
+	  	// Admin-managed "PMP Learning Hub" cards shown on the dashboard.
+	  	$data['hubCards'] = HubCard::where('status', 1)
+	  		->orderBy('sort_order', 'asc')
+	  		->get(['title', 'description', 'icon', 'color', 'link_url', 'is_new']);
 
 	  	if(count($data) > 0) {
 	      return response()->json([
@@ -82,17 +87,63 @@ class HomeController extends Controller
 			->where('test_results.user_id', $userId)
 			->where('answers.answer_id', '>', 0);
 
-		$attempted      = (int) (clone $base)->count();
-		$correct        = (int) (clone $base)->where('answers.is_correctans', '>', 0)->count();
 		$distinctSolved = (int) (clone $base)->distinct('answers.question_id')->count('answers.question_id');
 
+		// Exam readiness is a correctness rate, so it must only look at answers
+		// that were actually graded. Legacy rows from before correctness
+		// tracking existed have `is_correctans` left NULL — counting those as
+		// "attempted" here (while they can never satisfy `> 0`) silently
+		// treats every one of them as wrong, crushing the readiness score.
+		$graded    = (clone $base)->whereNotNull('answers.is_correctans');
+		$attempted = (int) (clone $graded)->count();
+		$correct   = (int) (clone $graded)->where('answers.is_correctans', '>', 0)->count();
+
+		$questionPct = $totalQ > 0 ? ($distinctSolved / $totalQ * 100) : 0;
+		$videoPct    = $this->videoWatchPercent($userId);
+
+		// "Overall Progress" covers the whole PMP Learning Hub, not just mock
+		// tests — a learner who has only been watching course/live videos
+		// (never yet solved a question) previously always read as 0%. Blend
+		// the two halves of the hub evenly; a single-source student still
+		// shows real movement instead of being capped at half by definition.
+		$overall = $totalQ > 0 || $videoPct > 0
+			? (int) round(($questionPct + $videoPct) / 2)
+			: 0;
+
 		return [
-			'overall_progress' => $totalQ > 0 ? (int) round($distinctSolved / $totalQ * 100) : 0,
+			'overall_progress' => $overall,
 			'mock_tests_taken' => $mockTestsTaken,
 			'questions_solved' => $distinctSolved,
 			'questions_total'  => $totalQ,
 			'exam_readiness'   => $attempted > 0 ? (int) round($correct / $attempted * 100) : 0,
 		];
+	}
+
+	/**
+	 * % of all active chapter + live-session videos this user has watched
+	 * (marked seen), across both video features.
+	 */
+	private function videoWatchPercent($userId)
+	{
+		$totalChapterVideos = (int) DB::table('chapter_videos')->where('status', 1)->count();
+		$totalLiveVideos    = (int) DB::table('live_video_links')->where('status', 1)->count();
+		$totalVideos        = $totalChapterVideos + $totalLiveVideos;
+
+		if ($totalVideos === 0) {
+			return 0;
+		}
+
+		$seenChapterVideos = (int) DB::table('users_videos')
+			->where('user_id', $userId)
+			->distinct('chapter_video_id')
+			->count('chapter_video_id');
+
+		$seenLiveVideos = (int) DB::table('live_video_seens')
+			->where('user_id', $userId)
+			->distinct('live_video_link_id')
+			->count('live_video_link_id');
+
+		return ($seenChapterVideos + $seenLiveVideos) / $totalVideos * 100;
 	}
 
 	public function explore(Request $request)

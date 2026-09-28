@@ -30,7 +30,7 @@ class UserResource extends JsonResource
             'bio' => $this->bio,
             //'created_at' => $this->created_at,
             //'updated_at' => $this->updated_at,
-            'active_plan' => $this->activeMembership() ? $this->activeMembership()->only('id','transaction_id', 'plan', 'amount', 'start_date', 'end_date') : (Object)[],
+            'active_plan' => $this->activeMembership() ? $this->activeMembership()->only('id','transaction_id', 'plan', 'plan_id', 'amount', 'start_date', 'end_date') : (Object)[],
         ];
     }
 }

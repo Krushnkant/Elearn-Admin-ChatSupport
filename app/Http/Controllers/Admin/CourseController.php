@@ -87,6 +87,12 @@ class CourseController extends Controller
     $data['title'] = "Edit Course";
     $data['skill_info'] = Skill::where('status', 1)->get();
     $data['course_info'] = Course::where('id', $id)->first();
+
+    if (!$data['course_info']) {
+      return Redirect::to("admin/courses")
+        ->withWarning("That course could not be found — it may have been deleted, or the link is out of date.");
+    }
+
     return view('admin.course.edit', $data);
   }
 

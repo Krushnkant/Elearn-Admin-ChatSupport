@@ -3,312 +3,290 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Example 1</title>
-    <!-- <link rel="stylesheet" href="{{url('public/css/pdf.css')}}" media="all" /> -->
+    <title>Assessment Result</title>
     <style>
-.clearfix:after {
-  content: "";
-  display: table;
-  clear: both;
-}
+        * { box-sizing: border-box; }
 
-a {
-  color: #5D6975;
-  text-decoration: underline;
-}
+        body {
+            position: relative;
+            width: 19cm;
+            margin: 0 auto;
+            color: #1f2933;
+            background: #ffffff;
+            font-family: Arial, "Helvetica", sans-serif;
+            font-size: 12px;
+        }
 
-body {
-  position: relative;
-  width: 19cm;
-  height: 29.7cm;
-  margin: 0 auto;
-  color: #001028;
-   background: #FFFFFF;
-  font-family: Arial, sans-serif;
-  font-size: 12px;
-  font-family: Arial;
-}
+        header { padding: 10px 0; margin-bottom: 18px; }
 
-header {
-  padding: 10px 0;
-  margin-bottom: 30px;
-}
+        #logo { text-align: center; margin-bottom: 8px; }
+        #logo img { width: 80px; }
 
-#logo {
-  text-align: center;
-  margin-bottom: 10px;
-}
+        h1.title {
+            text-align: center;
+            color: #34495e;
+            font-size: 22px;
+            font-weight: normal;
+            letter-spacing: 1px;
+            margin: 0;
+            padding: 8px 0;
+            border-top: 1px solid #cbd5e0;
+            border-bottom: 1px solid #cbd5e0;
+        }
 
-#logo img {
-  width: 90px;
-}
+        h2.section {
+            color: #34495e;
+            font-size: 15px;
+            font-weight: bold;
+            margin: 22px 0 10px 0;
+            padding-bottom: 4px;
+            border-bottom: 2px solid #4e79a7;
+        }
 
-h1 {
-  border-top: 1px solid  #5D6975;
-  border-bottom: 1px solid  #5D6975;
-  color: #5D6975;
-  font-size: 2.4em;
-  line-height: 1.4em;
-  font-weight: normal;
-  text-align: center;
-  margin: 0 0 20px 0;
-  /* background: url(dimension.png); */
-}
+        /* ---- Summary card ---- */
+        table.summary { width: 100%; border-collapse: collapse; }
+        table.summary td {
+            padding: 7px 10px;
+            border: 1px solid #e2e8f0;
+            font-size: 12px;
+        }
+        table.summary td.label {
+            width: 34%;
+            color: #52606d;
+            background: #f7fafc;
+            font-weight: bold;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 3px;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        .badge.pass { background: #2e8b57; }
+        .badge.fail { background: #d64545; }
 
-#project {
-  float: left;
-}
+        /* ---- Question overview counts ---- */
+        table.counts { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+        table.counts td {
+            width: 25%;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            padding: 10px 6px;
+        }
+        table.counts .num { font-size: 20px; font-weight: bold; }
+        table.counts .cap { font-size: 11px; color: #52606d; text-transform: uppercase; }
+        .c-correct { color: #2e8b57; }
+        .c-wrong   { color: #d64545; }
+        .c-skip    { color: #8a94a6; }
+        .c-total   { color: #34495e; }
 
-#project span {
-  color: #5D6975;
-  text-align: left;
-  width: 125px;
-  margin-right: 10px;
-  display: inline-block;
-  font-size: 0.8em;
-}
+        /* ---- Question dots ---- */
+        .legend { margin-bottom: 10px; font-size: 11px; color: #52606d; }
+        .legend .dot { margin: 0 4px 0 12px; }
+        .dot {
+            display: inline-block;
+            width: 13px;
+            height: 13px;
+            border-radius: 7px;
+            vertical-align: middle;
+            line-height: 13px;
+        }
+        .dot.correct { background: #2e8b57; }
+        .dot.wrong   { background: #d64545; }
+        .dot.skip    { background: #c2c9d1; }
 
-#company {
-  float: right;
-  text-align: right;
-}
+        .dotgrid {
+            border: 1px solid #e2e8f0;
+            padding: 10px 8px 4px 12px;
+        }
+        .q {
+            display: inline-block;
+            width: 30px;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .q .dot { display: block; margin: 0 auto 3px auto; }
+        .q .n { font-size: 9px; color: #8a94a6; }
 
-#project div,
-#company div {
-  white-space: nowrap;
-}
+        /* ---- Domain bar chart ---- */
+        table.bars { width: 100%; border-collapse: collapse; }
+        table.bars td { padding: 5px 6px; vertical-align: middle; border: none; }
+        td.bar-label { width: 30%; font-weight: bold; color: #34495e; font-size: 12px; }
+        td.bar-track { width: 55%; }
+        td.bar-val { width: 15%; text-align: right; font-weight: bold; color: #34495e; }
+        table.track { width: 100%; border-collapse: collapse; }
+        table.track td { padding: 0; height: 16px; border: none; }
+        table.track td.fill { background: #4e79a7; }
+        table.track td.rest { background: #edf1f5; }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  border-spacing: 0;
-  margin-bottom: 20px;
-}
+        /* ---- Detailed breakdown table ---- */
+        table.detail { width: 100%; border-collapse: collapse; }
+        table.detail th {
+            background: #34495e;
+            color: #ffffff;
+            font-weight: bold;
+            padding: 8px 10px;
+            font-size: 11px;
+            text-align: center;
+        }
+        table.detail th.left, table.detail td.left { text-align: left; }
+        table.detail td {
+            padding: 7px 10px;
+            border-bottom: 1px solid #e8ecf1;
+            text-align: center;
+            font-size: 11px;
+        }
+        table.detail tr.group td {
+            background: #eef2f7;
+            font-weight: bold;
+            color: #2c5282;
+        }
 
-table tr:nth-child(2n-1) td {
-  background: #F5F5F5;
-}
+        footer {
+            margin-top: 26px;
+            color: #8a94a6;
+            font-size: 10px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 8px;
+        }
 
-table th,
-table td {
-  text-align: center;
-}
-
-table th {
-  padding: 5px 20px;
-  color: #5D6975;
-  border-bottom: 1px solid #C1CED9;
-  white-space: nowrap;
-  font-weight: normal;
-}
-
-table .service,
-table .desc {
-  text-align: left;
-}
-
-table td {
-  padding: 10px;
-  text-align: center;
-}
-
-table td.service,
-table td.desc {
-  vertical-align: top;
-}
-
-table td.unit,
-table td.qty,
-table td.total {
-  font-size: 1.2em;
-}
-
-table td.grand {
-  border-top: 1px solid #5D6975;;
-}
-
-#notices .notice {
-  color: #5D6975;
-  font-size: 1.2em;
-}
-
-footer {
-  color: #5D6975;
-  width: 100%;
-  /* height: 30px; */
-  /* position: absolute; */
-  bottom: 0;
-  border-top: 1px solid #C1CED9;
-  padding: 8px 0;
-  text-align: center;
-}
-body {
-  font-family: "open sans", sans-serif;
-  /* background: #f1f1f1; */
-}
-#content {
-  margin: 40px auto;
-  text-align: center;
-  width: 600px;
-}
-#content h1 {
-  text-transform: uppercase;
-  font-weight: 700;
-  margin: 0 0 40px 0;
-  font-size: 25px;
-  line-height: 30px;
-}
-.step {
-  background: #cccccc;
-  border-radius: 0.8em;
-  -moz-border-radius: 0.8em;
-  -webkit-border-radius: 0.8em;
-  color: #ffffff;
-  display: inline-block;
-  font-weight: bold;
-  line-height: 1.6em;
-  margin-right: 5px;
-  text-align: center;
-  width: 1.6em;
-}
-
-.green {
-  background: green;
-  border-radius: 0.8em;
-  -moz-border-radius: 0.8em;
-  -webkit-border-radius: 0.8em;
-  display: inline-block;
-  color:green;
-  font-weight: bold;
-  line-height: 1.6em;
-  margin-right: 5px;
-  text-align: center;
-  width: 1.6em;
-}
-.red {
-  background: red;
-  border-radius: 0.8em;
-  -moz-border-radius: 0.8em;
-  -webkit-border-radius: 0.8em;
-  display: inline-block;
-  color:red;
-  font-weight: bold;
-  line-height: 1.6em;
-  margin-right: 5px;
-  text-align: center;
-  width: 1.6em;
-}
-.grey {
-  background: gray;
-  border-radius: 0.8em;
-  -moz-border-radius: 0.8em;
-  -webkit-border-radius: 0.8em;
-  display: inline-block;
-  color: gray;
-  font-weight: bold;
-  line-height: 1.6em;
-  margin-right: 5px;
-  text-align: center;
-  width: 1.6em;
-}
-
-
-thead {
-    display: table-header-group;
-}
-tfoot {
-    display: table-row-group;
-}
-tr {
-    page-break-inside: avoid;
-}
-
-</style>
+        tr { page-break-inside: avoid; }
+    </style>
 </head>
 
 <body>
-    <header class="clearfix">
+    @php
+        // Works whether $data['data'] rows are arrays or Eloquent models (both ArrayAccess).
+        $rows = $data['data'];
+        $correctCount = 0; $wrongCount = 0; $skipCount = 0;
+        foreach ($rows as $r) {
+            $ic = isset($r['is_correct']) ? $r['is_correct'] : '';
+            if ($ic === 'correct')        { $correctCount++; }
+            elseif ($ic === 'incorrect')  { $wrongCount++; }
+            else                          { $skipCount++; }
+        }
+        $totalQ = count($rows);
+        $statusText = trim(strip_tags((string) ($data['status'] ?? '')));
+        $isPass = strtolower($statusText) === 'pass';
+    @endphp
+
+    <header>
         <div id="logo">
-            <!--<img src="https://chatsupport.co.in/public/Admin/logo.jpeg" >-->
-			<img src="https://chatsupport.co.in/public/Admin/kwmain.png" >
-			
+            @php
+                // Embed the local logo so dompdf never fetches it over the network
+                // (the remote fetch added seconds to every PDF render).
+                $logoFile = public_path('Admin/kwmain.png');
+                $logoSrc  = is_file($logoFile)
+                    ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoFile))
+                    : 'https://chatsupport.co.in/public/Admin/kwmain.png';
+            @endphp
+            <img src="{{ $logoSrc }}" alt="Logo">
         </div>
-
-
-        <h1>Your Result</h1>
-        
-		<div id="project">
-            <div><span>Status</span>{{$data['status']}}</div>
-            <br />
-            <div><span>Percenatage Scored</span>{{$data['total_scored']}}</div>
-            <br />
-            <div><span>Assessment Completion Date</span>&nbsp;&nbsp;{{$data['assessment']['assessment_campletion_date']}}</div>
-            <br />
-            <div><span>Pass Percenatage</span> {{$data['passing_percentage']}}</div>
-            <br />
-            <div><span>Test name</span>{{$user->name}}</div>
-			
-        </div>
+        <h1 class="title">Assessment Result</h1>
     </header>
 
-    <main>
+    <table class="summary">
+        <tr>
+            <td class="label">Student Name</td>
+            <td>{{ $user->name ?? '--' }}</td>
+        </tr>
+        <tr>
+            <td class="label">Status</td>
+            <td><span class="badge {{ $isPass ? 'pass' : 'fail' }}">{{ $statusText ?: '--' }}</span></td>
+        </tr>
+        <tr>
+            <td class="label">Percentage Scored</td>
+            <td>{{ $data['total_scored'] ?? '--' }}</td>
+        </tr>
+        <tr>
+            <td class="label">Passing Percentage</td>
+            <td>{{ $data['passing_percentage'] ?? '--' }}</td>
+        </tr>
+        <tr>
+            <td class="label">Assessment Completion Date</td>
+            <td>{{ $data['assessment']['assessment_campletion_date'] ?? '--' }}</td>
+        </tr>
+    </table>
 
-        <h1>Questions</h1>
-        <div style="margin:20px 20px">
-            <div>
-                <div class="step green">1</div>Correct
-                <div class="step red">1</div>Wrong
-                <div class="step grey">1</div>Un-attampted
-            </div>
-            <br />
-            <br />
-            <br />
-            @foreach ($data['data'] as $key=> $result)
-            <div
-                class="step @if($result['is_correct']=='correct') green @elseif($result['is_correct']=='incorrect') red @elseif($result['is_correct']=='unattempted') grey @endif">
-                {{$key+1}} 
-			</div>
+    <h2 class="section">Question Overview</h2>
+    <table class="counts">
+        <tr>
+            <td><div class="num c-correct">{{ $correctCount }}</div><div class="cap">Correct</div></td>
+            <td><div class="num c-wrong">{{ $wrongCount }}</div><div class="cap">Wrong</div></td>
+            <td><div class="num c-skip">{{ $skipCount }}</div><div class="cap">Unattempted</div></td>
+            <td><div class="num c-total">{{ $totalQ }}</div><div class="cap">Total</div></td>
+        </tr>
+    </table>
+
+    <div class="legend">
+        <span class="dot correct"></span>Correct
+        <span class="dot wrong"></span>Wrong
+        <span class="dot skip"></span>Unattempted
+    </div>
+    <div class="dotgrid">
+        @foreach ($rows as $key => $result)
+            @php
+                $ic = isset($result['is_correct']) ? $result['is_correct'] : '';
+                $cls = $ic === 'correct' ? 'correct' : ($ic === 'incorrect' ? 'wrong' : 'skip');
+            @endphp
+            <span class="q"><span class="dot {{ $cls }}"></span><span class="n">{{ $key + 1 }}</span></span>
+        @endforeach
+    </div>
+
+    <h2 class="section">Performance by Domain</h2>
+    <table class="bars">
+        @foreach ($data['categoryWiseReport'] as $group)
+            @php $w = max(0, min(100, (int) round($group['scored']))); @endphp
+            <tr>
+                <td class="bar-label">{{ $group['title'] }}</td>
+                <td class="bar-track">
+                    <table class="track">
+                        <tr>
+                            @if ($w > 0)<td class="fill" style="width: {{ $w }}%;"></td>@endif
+                            @if ($w < 100)<td class="rest" style="width: {{ 100 - $w }}%;"></td>@endif
+                        </tr>
+                    </table>
+                </td>
+                <td class="bar-val">{{ $w }}%</td>
+            </tr>
+        @endforeach
+    </table>
+
+    <h2 class="section">Detailed Breakdown</h2>
+    <table class="detail">
+        <thead>
+            <tr>
+                <th class="left">Category</th>
+                <th>Total Questions</th>
+                <th>Correct Questions</th>
+                <th>Percentage Scored</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($data['categoryWiseReport'] as $group)
+                <tr class="group">
+                    <td class="left">{{ $group['title'] }}</td>
+                    <td>{{ $group['totalQuestion'] }}</td>
+                    <td>{{ $group['correctQuestion'] }}</td>
+                    <td>{{ round($group['scored']) }}%</td>
+                </tr>
+                @foreach ($group['category'] as $category)
+                    <tr>
+                        <td class="left">{{ $category['name'] }}</td>
+                        <td>{{ $category['totalQuestion'] }}</td>
+                        <td>{{ $category['correctQuestion'] }}</td>
+                        <td>{{ round($category['scored']) }}%</td>
+                    </tr>
+                @endforeach
             @endforeach
-        </div>
+        </tbody>
+    </table>
 
-        <h1>Progress Report</h1>
-        <div style="margin:20px 20px">
-            <img src="https://quickchart.io/chart?width=250&height=200&c={type:'line',data:{labels:['People','Process', 'Business Environment'], datasets:[{label:'Result', data: [{{$data['categoryWiseReport'][0]['category'][0]['correctQuestion']}},{{$data['categoryWiseReport'][0]['category'][1]['correctQuestion']}},{{$data['categoryWiseReport'][0]['category'][2]['correctQuestion']}}], fill:false,borderColor:'rgba(255,128,0,0.6)',fill:true,backgroundColor:'rgba(255,128,0,0.1)'}]}}" style="text-align: center">
-        </div>
-        <div style="margin-top:20px">
-            <h1>Questions List</h1>
-            <table>
-                <thead> 
-                    <tr>
-                        <th class="service">Category</th>
-                        <th>Total Questions</th>
-                        <th>Correct Questions</th>
-                        <th>Percenatage Scored</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($data['categoryWiseReport'] as $categoryWiseReport)
-                    <tr>
-                        <td style="color:green;font-weight: bold;" class="service">{{$categoryWiseReport['title']}}</td>
-                        <td class="unit">{{$categoryWiseReport['totalQuestion']}}</td>
-                        <td class="qty">{{$categoryWiseReport['correctQuestion']}}</td>
-                        <td class="total">{{$categoryWiseReport['scored']}}%</td>
-                    </tr>
-                    @foreach ($categoryWiseReport['category'] as $category)
-                    <tr>
-                        <td class="service">{{$category['name']}}</td>
-                        <td class="unit">{{$category['totalQuestion']}}</td>
-                        <td class="qty">{{$category['correctQuestion']}}</td>
-                        <td class="total">{{$category['scored']}}%</td>
-                    </tr>
-                    @endforeach
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </main>  
     <footer>
-    Copyright © 2021 <a href="#"> Knowledgewoods.</a> All rights reserved.
+        Copyright &copy; {{ date('Y') }} Knowledgewoods. All rights reserved.
     </footer>
 </body>
 

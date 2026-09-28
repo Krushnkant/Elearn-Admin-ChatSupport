@@ -40,7 +40,19 @@
                     </div>
 
                     <div class="form-group col-md-12 ">
-                      <label for="video">Video<span class="text-danger">*</span></label>
+                      <label>Video Source<span class="text-danger">*</span></label>
+                      <div>
+                        <label style="font-weight: normal; margin-right: 20px;">
+                          <input type="radio" name="video_source" value="file" checked onclick="toggleVideoSource('file')"> Upload File
+                        </label>
+                        <label style="font-weight: normal;">
+                          <input type="radio" name="video_source" value="link" onclick="toggleVideoSource('link')"> Paste Link
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="form-group col-md-12 " id="videoFileGroup">
+                      <label for="video">Video File</label>
                       <input type="file" name="video" class="form-control" id="video"  accept="video/mp4,video/x-m4v,video/*">
                       @if ($errors->has('video'))
                       <p class="error text text-danger">
@@ -49,7 +61,26 @@
                       @endif
                     </div>
 
-                    
+                    <div class="form-group col-md-12 " id="videoUrlGroup" style="display:none;">
+                      <label for="video_url">Video Link</label>
+                      <input type="text" name="video_url" class="form-control" id="video_url" placeholder="https://... (YouTube, Vimeo, or any direct video link)" value="{{ old('video_url') }}">
+                      @if ($errors->has('video_url'))
+                      <p class="error text text-danger">
+                          <i class="fa fa-times-circle-o"></i>  {{ $errors->first('video_url') }}
+                      </p>
+                      @endif
+                    </div>
+
+                    <div class="form-group col-md-12 ">
+                      <label for="duration">Duration</label>
+                      <input type="text" name="duration" class="form-control" id="duration" placeholder="e.g. 12:34" value="{{ old('duration') }}" style="max-width: 200px;">
+                      <small class="form-text text-muted" id="durationHint" style="display:none;">Auto-filled from the video — edit it if it's not right.</small>
+                      @if ($errors->has('duration'))
+                      <p class="error text text-danger">
+                          <i class="fa fa-times-circle-o"></i>  {{ $errors->first('duration') }}
+                      </p>
+                      @endif
+                    </div>
 
                     <div class="form-group col-md-12">
                       <div class="row">
@@ -102,5 +133,159 @@
 
 @endsection
 @section('js')
+<script type="text/javascript">
+  function toggleVideoSource(mode) {
+    var fileGroup = document.getElementById('videoFileGroup');
+    var urlGroup  = document.getElementById('videoUrlGroup');
+    var fileInput = document.getElementById('video');
+    var urlInput  = document.getElementById('video_url');
 
+    if (mode === 'link') {
+      fileGroup.style.display = 'none';
+      urlGroup.style.display = '';
+      fileInput.value = '';
+    } else {
+      urlGroup.style.display = 'none';
+      fileGroup.style.display = '';
+      urlInput.value = '';
+    }
+  }
+
+  // Auto-fill Duration from the real video length instead of making the
+  // admin measure and type it in by hand. Works by loading the picked file
+  // (or a pasted direct video link) into a throwaway <video> element and
+  // reading its real .duration once the browser has parsed the metadata —
+  // no server-side ffmpeg/getID3 dependency needed. YouTube/Vimeo links
+  // can't be read this way (they're pages, not video files), so those are
+  // left for the admin to fill in manually.
+  function formatDuration(totalSeconds) {
+    totalSeconds = Math.round(totalSeconds);
+    var h = Math.floor(totalSeconds / 3600);
+    var m = Math.floor((totalSeconds % 3600) / 60);
+    var s = totalSeconds % 60;
+    var pad = function(n) { return n < 10 ? '0' + n : '' + n; };
+    return h > 0 ? (h + ':' + pad(m) + ':' + pad(s)) : (pad(m) + ':' + pad(s));
+  }
+
+  function readDurationFromSrc(src, revokeAfter) {
+    var probe = document.createElement('video');
+    probe.preload = 'metadata';
+    probe.onloadedmetadata = function() {
+      if (isFinite(probe.duration) && probe.duration > 0) {
+        var durationField = document.getElementById('duration');
+        durationField.value = formatDuration(probe.duration);
+        document.getElementById('durationHint').style.display = '';
+      }
+      if (revokeAfter) URL.revokeObjectURL(src);
+    };
+    probe.onerror = function() {
+      if (revokeAfter) URL.revokeObjectURL(src);
+    };
+    probe.src = src;
+  }
+
+  document.getElementById('video').addEventListener('change', function(e) {
+    var file = e.target.files && e.target.files[0];
+    if (file) readDurationFromSrc(URL.createObjectURL(file), true);
+  });
+
+  // YouTube/Vimeo links: their own Player APIs know the real duration once
+  // the video has loaded, even though there's no raw file to probe. Load a
+  // throwaway off-screen player, ask it for the duration, then tear it down.
+  function applyDetectedDuration(seconds) {
+    if (isFinite(seconds) && seconds > 0) {
+      document.getElementById('duration').value = formatDuration(seconds);
+      document.getElementById('durationHint').style.display = '';
+    }
+  }
+
+  function makeHiddenHost() {
+    var host = document.createElement('div');
+    host.style.cssText = 'position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;';
+    host.id = 'durationProbe' + Date.now();
+    document.body.appendChild(host);
+    return host;
+  }
+
+  var ytApiQueue = [];
+  function loadYouTubeApi(cb) {
+    if (window.YT && window.YT.Player) { cb(); return; }
+    ytApiQueue.push(cb);
+    if (!document.getElementById('yt-iframe-api')) {
+      var s = document.createElement('script');
+      s.id = 'yt-iframe-api'; s.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(s);
+    }
+  }
+  var priorYTReady = window.onYouTubeIframeAPIReady;
+  window.onYouTubeIframeAPIReady = function() {
+    if (typeof priorYTReady === 'function') priorYTReady();
+    var q = ytApiQueue; ytApiQueue = [];
+    q.forEach(function(cb) { cb(); });
+  };
+
+  function probeYouTubeDuration(videoId) {
+    loadYouTubeApi(function() {
+      var host = makeHiddenHost();
+      try {
+        var player = new YT.Player(host.id, {
+          videoId: videoId,
+          events: {
+            onReady: function(e) {
+              applyDetectedDuration(e.target.getDuration());
+              try { e.target.destroy(); } catch (err) {}
+              host.remove();
+            },
+            onError: function() { host.remove(); }
+          }
+        });
+      } catch (err) { host.remove(); }
+    });
+  }
+
+  var vimeoApiQueue = [];
+  function loadVimeoApi(cb) {
+    if (window.Vimeo && window.Vimeo.Player) { cb(); return; }
+    vimeoApiQueue.push(cb);
+    if (!document.getElementById('vimeo-player-api')) {
+      var s = document.createElement('script');
+      s.id = 'vimeo-player-api'; s.src = 'https://player.vimeo.com/api/player.js';
+      s.onload = function() { var q = vimeoApiQueue; vimeoApiQueue = []; q.forEach(function(cb) { cb(); }); };
+      document.head.appendChild(s);
+    }
+  }
+
+  function probeVimeoDuration(videoId) {
+    loadVimeoApi(function() {
+      var host = makeHiddenHost();
+      var iframe = document.createElement('iframe');
+      iframe.src = 'https://player.vimeo.com/video/' + videoId;
+      iframe.width = 200; iframe.height = 113; iframe.frameBorder = 0;
+      host.appendChild(iframe);
+      try {
+        var player = new Vimeo.Player(iframe);
+        player.getDuration().then(function(seconds) {
+          applyDetectedDuration(seconds);
+          host.remove();
+        }).catch(function() { host.remove(); });
+      } catch (err) { host.remove(); }
+    });
+  }
+
+  document.getElementById('video_url').addEventListener('blur', function(e) {
+    var url = e.target.value.trim();
+    if (!url) return;
+
+    var yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{6,})/i);
+    if (yt) { probeYouTubeDuration(yt[1]); return; }
+
+    var vim = url.match(/vimeo\.com\/(?:video\/)?(\d+)/i);
+    if (vim) { probeVimeoDuration(vim[1]); return; }
+
+    // Anything else: only worth trying as a direct file link.
+    if (/\.(mp4|webm|ogg|mov|m4v)(\?|$)/i.test(url)) {
+      readDurationFromSrc(url, false);
+    }
+  });
+</script>
 @endsection

@@ -80,6 +80,7 @@
                     <th>Id</th>
                     <th>Title</th>
                     <th>Course</th>
+                    <th>Duration</th>
                     <th>status</th>
                     <th>Created At</th>
                     <th>Action</th>
@@ -201,6 +202,7 @@
           { data: 'id', name: 'id', 'visible': false },
           { data: 'title', name: 'title', 'visible': true },
           { data: 'chapter.name', name: 'chapter.name', 'visible': true },
+          { data: 'duration', name: 'duration', 'visible': true },
           { data: 'status', name: 'status', 'visible': true },
           { data: 'created_at', name: 'created_at', 'visible': true },
           { data: 'action', name: 'action', orderable: false },

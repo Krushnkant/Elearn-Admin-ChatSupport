@@ -12,25 +12,25 @@ class CourseVideo extends Model
 
     public function getPreviewAttribute($value) {
         if($value) {
-            return asset('https://chatsupport.co.in/public/course_video/'.$value);
+            return asset(config('app.content_asset_url').'/public/course_video/'.$value);
         }
         return '';
     }
 
     public function getOriginalPreviewAttribute()
     {
-       return $this->attributes['image'];
+       return $this->attributes['preview'] ?? null;
     }
 
     public function getBookAttribute($value) {
         if($value) {
-            return asset('https://chatsupport.co.in/public/course_video/'.$value);
+            return asset(config('app.content_asset_url').'/public/course_video/'.$value);
         }
         return '';
     }
 
     public function getOriginalBookAttribute()
     {
-       return $this->attributes['book'];
+       return $this->attributes['book'] ?? null;
     }
 }
